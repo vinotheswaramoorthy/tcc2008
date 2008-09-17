@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="deployed/|verified/|bin/|.settings/|res/|verified/|src/mobile/midlet/|src/" kind="src" path=""/>
+	<classpathentry kind="src" path=".settings"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="verified"/>
+	<classpathentry kind="src" path="bin"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="J2MELIB"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
