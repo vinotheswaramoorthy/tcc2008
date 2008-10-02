@@ -1,6 +1,5 @@
 package mobile.midlet;
 
-
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -10,6 +9,8 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+
+import mobile.filetransfer.FileTransfer;
 
 
 public class MainMenu extends MIDlet implements CommandListener {
@@ -30,6 +31,8 @@ public class MainMenu extends MIDlet implements CommandListener {
 	private Command cmdConfigChat;
 	private Command cmdConfigProfile;
 	private Command cmdConfigShareFile;
+	
+	private FileTransfer fileTransfer;
 
 	public MainMenu() {
 		display = Display.getDisplay(this);
@@ -65,6 +68,9 @@ public class MainMenu extends MIDlet implements CommandListener {
 		menuConfig.setCommandListener(this);
 
 		/*****************************************/
+		
+		//instancia o fileTransfer
+		fileTransfer = new FileTransfer(this);
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
@@ -124,9 +130,13 @@ public class MainMenu extends MIDlet implements CommandListener {
 		}
 		else if(cmd == this.cmdShareFile)
 		{
+			/*
 			alert = new Alert("...SHARE FILES",msg,null, AlertType.INFO);
 			alert.setTimeout(Alert.FOREVER);
 			this.display.setCurrent(alert);
+			*/
+			//chama o fileTransfer
+			this.display.setCurrent(fileTransfer);
 		}
 		else if(cmd == this.cmdConfigChat)
 		{
@@ -148,66 +158,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 		}
 		else if(cmd == this.cmdSelect)
 		{
-			this.screenShow(this.menuConfig
-					
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			);
+			this.screenShow(this.menuConfig);
 		}
 		else if(cmd == this.cmdBackMain)
 		{
@@ -216,7 +167,10 @@ public class MainMenu extends MIDlet implements CommandListener {
 		
 	}
 
-
+	public void showMainMenu(){
+		display.setCurrent(menuMain);
+	}
+	
 	public void screenShow(Displayable diplay) {
 		if (diplay==null)
 			display.setCurrent(menuMain);
