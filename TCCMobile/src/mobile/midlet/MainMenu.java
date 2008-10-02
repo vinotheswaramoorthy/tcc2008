@@ -10,6 +10,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import mobile.chat.Chat;
 import mobile.filetransfer.FileTransfer;
 
 
@@ -33,6 +34,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 	private Command cmdConfigShareFile;
 	
 	private FileTransfer fileTransfer;
+	private Chat chat;
 
 	public MainMenu() {
 		display = Display.getDisplay(this);
@@ -71,6 +73,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 		
 		//instancia o fileTransfer
 		fileTransfer = new FileTransfer(this);
+		chat = new Chat(this);
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
@@ -118,9 +121,13 @@ public class MainMenu extends MIDlet implements CommandListener {
 		//System.out.println("Select: "+ cmd);
 		if(cmd == this.cmdChat)
 		{
+			/*
 			alert = new Alert("...CHAT...",msg,null, AlertType.INFO);
 			alert.setTimeout(Alert.FOREVER);
 			this.display.setCurrent(alert);
+			*/
+			// chama o Form Chat
+			this.screenShow(chat);
 		}
 		else if(cmd == this.cmdProfile)
 		{
