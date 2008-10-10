@@ -4,5 +4,6 @@
 	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
 	<classpathentry path="libs" kind="lib"/>
 	<classpathentry path="libs/bluecove-2.0.3.jar" kind="lib"/>
+	<classpathentry path="libs/jsr082.jar" kind="lib"/>
 	<classpathentry path="bin" kind="output"/>
 </classpath>
