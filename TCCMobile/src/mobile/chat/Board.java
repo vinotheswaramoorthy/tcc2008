@@ -1,8 +1,21 @@
 package mobile.chat;
 
 import javax.microedition.lcdui.*;
-public class Board extends CustomItem
+
+
+public class Board extends CustomItem implements ItemCommandListener
 {
+	private final static int UPPER = 0;
+    private final static int IN = 1;
+    private final static int LOWER = 2;
+    // status tells us where the cursor is on the form, UPPER, IN or LOWER
+    private int status = UPPER;
+    // location tells us where the cursor is inside the item
+    private int location = 0;
+    
+    private int position = 0;
+    
+    
 	private String textBoard = " ";
 	private Font font;
 	private int borderColor = 0x9999ff;
@@ -16,6 +29,53 @@ public class Board extends CustomItem
 			this.setPreferredSize(width, height);
 	}       
 
+	protected boolean traverse(int dir, int viewportWidth, int viewportHeight, int[] visRect_inout) 
+    {
+		switch (dir) 
+		{
+			case Canvas.DOWN:
+				if (status == UPPER) 
+				{
+					status = IN;
+//					return false;
+				} 
+				else if(status == IN) 
+				{
+					if(location >= position)
+					{
+						status = LOWER;
+						return false;
+					}
+					else location += font.getHeight();
+				}
+				
+				
+				repaint();
+				break;
+			
+			case Canvas.UP:
+				if (status == LOWER) {
+					status = IN;
+//					return false;
+				} 
+				else if(status == IN )
+				{
+					if(location <= 0)
+					{
+						status = UPPER;
+						return false;
+					}
+					else location -= font.getHeight();
+				}
+				
+				
+				repaint();
+				break;
+			
+		}
+		return true;
+	}
+	
 
 	public int getWrapHeight(Graphics g, String s, int x, int y, int w, int anchor)
 	{
@@ -88,33 +148,41 @@ public class Board extends CustomItem
 		return 100;
 	}
 
-	protected void paint(Graphics g, int w, int h) {
-
+	protected void paint(Graphics g, int w, int h) 
+	{
 		g.setColor(backgroundColor);
-		g.fillRect(0, 0, w, h);
+		g.fillRect(0, 0, w-1, h-1);
 		
-		int anchor = Graphics.TOP | Graphics.LEFT;
-		if (font == null)
-		{
-			int[] size = { Font.SIZE_LARGE, Font.SIZE_MEDIUM, Font.SIZE_SMALL };
-			for (int i = 0; i < size.length; i++)
-			{
-				setFont(Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, size[i]));
-				g.setFont(font);
-				getWrapHeight(g, textBoard, 0, 0, w, anchor);
-				//if (wh < h - y) break;
-			}
-		}
-		g.setFont(font);
-		g.setColor(textColor);
-		wrap(g, textBoard, 5, 5, w-10, anchor);
 		g.setColor(borderColor);
 		g.drawRect(0, 0, w-1, h-1);
+		
+		g.setFont(font);		
+			
+		int textHeight = getWrapHeight(g, textBoard, 5 , -(location), w-5, Graphics.LEFT | Graphics.TOP);
+		position = textHeight - h;
+		
+			
+		g.setColor(borderColor);
+		g.fillRect(w-10, 0 , w-1, h-1);
+		if(position > 0)
+		{
+			g.setColor(0xffffff);
+			g.fillRect(w-11, (h/position)*(location-10) , w-3, 10);
+		}
+		
+		g.setColor(textColor);
+		wrap(g, textBoard, 5 , -(location), w-16, Graphics.LEFT | Graphics.TOP);
+			
 	}
 
 	public void AppendText(String text)
 	{
-		textBoard += text;
+		if(text.equals("#CLEAR#")) textBoard ="";
+		else textBoard += " "+text;
+		
+		if (position > 0)
+			location = position + font.getHeight();
+		
 		this.repaint();
 	}
 
@@ -151,6 +219,12 @@ public class Board extends CustomItem
 
 	public int getBackgroundColor() {
 		return backgroundColor;
+	}
+
+
+	public void commandAction(Command arg0, Item arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
