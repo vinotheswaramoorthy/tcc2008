@@ -1,5 +1,8 @@
 package mobile.midlet;
 
+import java.util.Enumeration;
+
+import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -34,6 +37,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 	private Command cmdConfigShareFile;
 	
 	private FileTransfer fileTransfer;
+	public Enumeration listRoots;
 	private Chat chat;
 
 	public MainMenu() {
@@ -77,6 +81,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 	}
 
 	protected void startApp() throws MIDletStateChangeException {
+		listRoots = FileSystemRegistry.listRoots();
 		display.setCurrent(menuMain);
 	}
 
@@ -98,7 +103,6 @@ public class MainMenu extends MIDlet implements CommandListener {
 				System.out.println("entrei main");
 				switch(menuMain.getSelectedIndex())
 				{
-
 					case 0: cmd = this.cmdChat;break;
 					case 1: cmd = this.cmdProfile;break;
 					case 2: cmd = this.cmdShareFile;break;
@@ -177,12 +181,12 @@ public class MainMenu extends MIDlet implements CommandListener {
 	public void showMainMenu(){
 		display.setCurrent(menuMain);
 	}
-	
+		
 	public void screenShow(Displayable diplay) {
 		if (diplay==null)
 			display.setCurrent(menuMain);
 		else
-		display.setCurrent(diplay);
+			display.setCurrent(diplay);
 	}
 
 }
