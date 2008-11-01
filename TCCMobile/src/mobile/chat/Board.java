@@ -1,6 +1,12 @@
 package mobile.chat;
 
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CustomItem;
+import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 
 
 public class Board extends CustomItem implements ItemCommandListener
