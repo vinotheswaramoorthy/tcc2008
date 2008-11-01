@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -13,11 +14,19 @@ import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import com.sun.kvem.midp.pim.formats.EndMatcher;
+
 import mobile.chat.Chat;
 import mobile.filetransfer.FileTransfer;
+import mobile.lib.BTListener;
+import mobile.lib.Constants;
+import mobile.lib.DevicePoint;
+import mobile.lib.GeneralServer;
+import mobile.lib.ProtoPackage;
+import mobile.lib.Util;
 
 
-public class MainMenu extends MIDlet implements CommandListener {
+public class MainMenu extends MIDlet implements CommandListener, BTListener {
 
 	Alert alert;
 
@@ -36,11 +45,18 @@ public class MainMenu extends MIDlet implements CommandListener {
 	private Command cmdConfigProfile;
 	private Command cmdConfigShareFile;
 	
+	private GeneralServer btServer;
+	
+	
 	private FileTransfer fileTransfer;
 	public Enumeration listRoots;
 	private Chat chat;
 
 	public MainMenu() {
+		
+		//LOG!
+		Util.enableLog = false;
+		
 		display = Display.getDisplay(this);
 
 		//cmdExit 		= new Command("Exit", 			Command.EXIT, 	1);
@@ -56,7 +72,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 		/*****************************************/
 
 		String[] optMain = {"Bate-Papo", "Buscar Amigos", "Compartilhar Arquivos", "Configuração"};
-		menuMain = new List("MENU", List.IMPLICIT, optMain, null);
+		menuMain = new List("MENU", Choice.IMPLICIT, optMain, null);
 		menuMain.addCommand(cmdSelect);
 //		menuMain.addCommand(cmdProfile);
 //		menuMain.addCommand(cmdChat);
@@ -66,7 +82,7 @@ public class MainMenu extends MIDlet implements CommandListener {
 		/*****************************************/
 
 		String[] optConfig = {"Configurar Chat", "Configurar Perfil", "Configurar Compartilhador"};
-		menuConfig = new List("CONFIGURAÇÃO", List.IMPLICIT, optConfig, null);
+		menuConfig = new List("CONFIGURAÇÃO", Choice.IMPLICIT, optConfig, null);
 		menuConfig.addCommand(cmdBackMain);
 //		menuConfig.addCommand(cmdConfigProfile);
 //		menuConfig.addCommand(cmdConfigChat);
@@ -74,6 +90,20 @@ public class MainMenu extends MIDlet implements CommandListener {
 		menuConfig.setCommandListener(this);
 
 		/*****************************************/
+		
+		////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		
+		btServer = new GeneralServer();
+		
+		btServer.init( "", this);
+		
+		btServer.query();
+		
+		////////////////////////////////////////////////////////////////////////
+
+		
+		
 		
 		//instancia o fileTransfer
 		fileTransfer = new FileTransfer(this);
@@ -85,6 +115,12 @@ public class MainMenu extends MIDlet implements CommandListener {
 		display.setCurrent(menuMain);
 	}
 
+	public void showAlert(String message){
+		alert = new Alert("...TESTE...",message,null, AlertType.INFO);
+		alert.setTimeout(Alert.FOREVER);
+		this.display.setCurrent(alert);
+	}
+	
 	protected void pauseApp() {
 		// TODO Auto-generated method stub
 
@@ -189,4 +225,41 @@ public class MainMenu extends MIDlet implements CommandListener {
 			display.setCurrent(diplay);
 	}
 
+	public void handleAction(byte action, Object param1, Object param2) {				
+		
+		DevicePoint endpt = (DevicePoint) param1;
+		ProtoPackage pkt = (ProtoPackage) param2;
+		
+		
+		if( pkt.application == Constants.APP_GENERAL ) {			
+			//General must be handled HERE!			
+		}
+		else if( pkt.application == Constants.APP_CHAT ){
+			chat.handleAction(action, param1, param2);
+			
+		}
+		else if( pkt.application == Constants.APP_PROFILE ){
+			
+			
+		}
+		else if( pkt.application == Constants.APP_FILETRANSFER ){
+			
+			
+		} 
+		
+	    
+		
+	}
+
+	public void send(byte app, byte cmd, String msg){
+		
+		ProtoPackage senderPkt = new ProtoPackage(
+					app,
+					cmd, 
+					btServer.localName,
+					"", //Will be replaced by the correct destination
+					msg
+				); 
+		btServer.sendPacket(senderPkt);		
+	}
 }
