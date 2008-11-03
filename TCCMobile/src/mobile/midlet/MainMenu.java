@@ -44,6 +44,7 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 	private Command cmdConfigChat;
 	private Command cmdConfigProfile;
 	private Command cmdConfigShareFile;
+	private Command cmdExit;
 	
 	private GeneralServer btServer;
 	
@@ -68,12 +69,14 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 		cmdConfigChat		= new Command("ConfigChat",		Command.BACK, 	1);
 		cmdConfigProfile	= new Command("ConfigProfile",	Command.BACK, 	1);
 		cmdConfigShareFile	= new Command("ConfigShareFile",Command.BACK, 	1);
-
+		cmdExit				= new Command("Exit", 			Command.EXIT,	1);
+		
 		/*****************************************/
 
 		String[] optMain = {"Bate-Papo", "Buscar Amigos", "Compartilhar Arquivos", "Configuração"};
 		menuMain = new List("MENU", Choice.IMPLICIT, optMain, null);
 		menuMain.addCommand(cmdSelect);
+		menuMain.addCommand(cmdExit);
 //		menuMain.addCommand(cmdProfile);
 //		menuMain.addCommand(cmdChat);
 //		menuMain.addCommand(cmdShareFile);
@@ -177,13 +180,7 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 		}
 		else if(cmd == this.cmdShareFile)
 		{
-			/*
-			alert = new Alert("...SHARE FILES",msg,null, AlertType.INFO);
-			alert.setTimeout(Alert.FOREVER);
-			this.display.setCurrent(alert);
-			*/
-			//chama o fileTransfer
-			this.display.setCurrent(fileTransfer);
+			fileTransfer = new FileTransfer(this);
 		}
 		else if(cmd == this.cmdConfigChat)
 		{
@@ -210,6 +207,15 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 		else if(cmd == this.cmdBackMain)
 		{
 			this.screenShow(null); 
+		}
+		else if(cmd == this.cmdExit){
+			try {
+				this.destroyApp(true);
+			} catch (MIDletStateChangeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			notifyDestroyed();
 		}
 		
 	}
