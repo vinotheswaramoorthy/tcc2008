@@ -1,8 +1,6 @@
 package mobile.filetransfer;
 
-import java.awt.Choice;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
