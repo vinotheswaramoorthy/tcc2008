@@ -78,7 +78,7 @@ public class GeneralServer implements Runnable
       agent = localDevice.getDiscoveryAgent(); // obtain reference to singleton
 
       if( localName == "")
-    	  this.localName = localDevice.getFriendlyName();
+    	  this.localName = localDevice.getBluetoothAddress();
       // print local device information
       //Util.printLocalDevice( localDevice );
 
