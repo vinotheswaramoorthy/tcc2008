@@ -1,3 +1,4 @@
+MIDlet-1: MainMID,,mobile.midlet.MainMID
 MIDlet-Jar-URL: TCCMobile2.jar
 MIDlet-Name: TCCMobile2 MIDlet Suite
 MIDlet-Vendor: MIDlet Suite Vendor
