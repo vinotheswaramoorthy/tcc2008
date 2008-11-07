@@ -2,8 +2,10 @@ package mobile.midlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -54,6 +56,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     private int cols;
     private int elementWidth;
     
+    public static Enumeration listRoots = FileSystemRegistry.listRoots();
     
 	protected void startApp() throws MIDletStateChangeException {
         try {
