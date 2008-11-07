@@ -2,7 +2,7 @@ package mobile.lib;
 
 public class Util {
  
-	public static boolean enableLog = false;
+	public static boolean enableLog = true;
 
 	public static void Log(String msg){
 

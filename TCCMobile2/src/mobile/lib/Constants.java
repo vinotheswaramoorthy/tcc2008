@@ -18,11 +18,12 @@ public class Constants {
 	  public final static byte CMD_INITIATED		= 0x36;
 	  
 	  //Events
-	  public final static byte EVENT_JOIN		= 0x37;
-	  public final static byte EVENT_LEAVE 		= 0x38;	  
-	  public final static byte EVENT_SENT 		= 0x39;
-	  public final static byte EVENT_RECEIVED	= 0x3A;
-	  
+	  public final static byte EVENT_JOIN			= 0x37;
+	  public final static byte EVENT_LEAVE 			= 0x38;	  
+	  public final static byte EVENT_SENT 			= 0x39;
+	  public final static byte EVENT_RECEIVED		= 0x3A;
+	  public final static byte EVENT_LISTCHAT		= 0x3B;
+	  public final static byte EVENT_LISTCHAT_ACK 	= 0x3C;
 	  
 	  
 	  /*

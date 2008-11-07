@@ -251,12 +251,10 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 		else if( pkt.application == Constants.APP_FILETRANSFER ){
 			
 			
-		} 
-		
-	    
-		
+		} 			  
 	}
 
+	//Send in a broadcast mode
 	public void send(byte app, byte cmd, String msg){
 		
 		ProtoPackage senderPkt = new ProtoPackage(
@@ -267,5 +265,17 @@ public class MainMenu extends MIDlet implements CommandListener, BTListener {
 					msg
 				); 
 		btServer.sendPacket(senderPkt);		
+	}
+	
+	public void sendSingle(String deviceName, byte app, byte cmd, String msg){
+		
+		ProtoPackage senderPkt = new ProtoPackage(
+					app,
+					cmd, 
+					btServer.localName,
+					deviceName,
+					msg
+				); 
+		btServer.sendPacket(senderPkt, deviceName);		
 	}
 }

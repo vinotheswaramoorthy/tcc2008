@@ -1,5 +1,7 @@
 package mobile.ui;
 
+import mobile.midlet.MainMID;
+
 import com.sun.lwuit.*;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
@@ -14,13 +16,21 @@ public abstract class BaseForm {
      */
     public abstract String getName();
     
+    private MainMID _midlet;
+    protected MainMID getMidlet(){
+    	
+    	return _midlet;
+    	
+    }
     
     /**
      * Invoked by the main code to start the form
      */
-    public final void run(final Command backCommand, ActionListener commandListener) {
+    public final void run(final Command backCommand, MainMID midlet) {
         System.gc();
         final Form formItem = new Form(getName());
+        
+        this._midlet = midlet;
         
         //Adiciona o botão de HELP para todos os formulários
         formItem.addCommand(new Command("Help") {
@@ -42,7 +52,7 @@ public abstract class BaseForm {
         });
         
         formItem.addCommand(backCommand);
-        formItem.setCommandListener(commandListener);
+        formItem.setCommandListener(midlet);
         formItem.setBackCommand(backCommand);
         execute(formItem);
         formItem.show();
@@ -97,4 +107,5 @@ public abstract class BaseForm {
      public void cleanup() {
      }
     
+     public abstract void handleAction(byte action, Object param1, Object param2);
 }

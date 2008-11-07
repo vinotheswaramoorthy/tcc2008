@@ -183,21 +183,6 @@ public class GeneralServer implements Runnable
     }
     return null; // not found, return null
   }
-
-//  /**
-//   * Send a string message to all active DevicePoints
-//   * @param s
-//   */
-//  public void sendString( String s )
-//  {
-//    Util.Log("invoke sendString string="+s);
-//    for ( int i=0; i < endPoints.size(); i++ )
-//    {
-//      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
-//      // put the string on EndPoint, so sender will send the message
-//      endpt.putString( GeneralServer.SIGNAL_MESSAGE, s );
-//    }
-//  }
   
   public void sendPacket(ProtoPackage pp){
 	    Util.Log("invoke sendString string="+pp.msg);
@@ -206,10 +191,27 @@ public class GeneralServer implements Runnable
 	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
 	      // put the string on EndPoint, so sender will send the message
 	      pp.receiver = endpt.remoteName;
+	      Util.Log("Sending packet from="+pp.sender+"; to="+pp.receiver);
 	      endpt.putPacket( pp );
 	    }
   }
 
+  public void sendPacket(ProtoPackage pp, String deviceName ){
+	    Util.Log("invoke sendString string="+pp.msg);
+	    for ( int i=0; i < endPoints.size(); i++ )
+	    {	      
+	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
+	      
+	      if( endpt.remoteName.equals(deviceName) ){
+		      // put the string on EndPoint, so sender will send the message
+		      pp.receiver = endpt.remoteName;
+		      Util.Log("Sending packet from="+pp.sender+"; to="+pp.receiver);
+		      endpt.putPacket( pp );
+	      }
+	    }
+}
+
+  
   /**
    * Clean up the resource for a EndPoint, remove it from the active list.
    * This is triggered by a remote EndPoint leaving the network

@@ -21,9 +21,14 @@ import com.sun.lwuit.plaf.UIManager;
 import com.sun.lwuit.util.*;
 
 import mobile.chat.FormChat;
+import mobile.lib.BTListener;
+import mobile.lib.Constants;
+import mobile.lib.DevicePoint;
+import mobile.lib.GeneralServer;
+import mobile.lib.ProtoPackage;
 import mobile.ui.*;
 
-public class MainMID extends MIDlet implements ActionListener{
+public class MainMID extends MIDlet implements ActionListener, BTListener{
 
     private static final int EXIT_COMMAND = 1;
     private static final int RUN_COMMAND = 2;
@@ -41,6 +46,8 @@ public class MainMID extends MIDlet implements ActionListener{
     };
     private Hashtable formsHash = new Hashtable();
     
+	private GeneralServer btServer;
+    
     private static Transition componentTransitions;
     private static Form mainMenu;
     private BaseForm currentForm;
@@ -51,7 +58,7 @@ public class MainMID extends MIDlet implements ActionListener{
 	protected void startApp() throws MIDletStateChangeException {
         try {
             Display.init(this);
-            InputStream stream = getClass().getResourceAsStream("/resources.res");
+            InputStream stream = getClass().getResourceAsStream("/icons.res");
             Resources r2;
             if (stream == null) {
                 return;
@@ -66,6 +73,21 @@ public class MainMID extends MIDlet implements ActionListener{
             Resources r1 = Resources.open("/businessTheme.res");
             UIManager.getInstance().setThemeProps(r1.getTheme(r1.getThemeResourceNames()[0]));
 
+    		////////////////////////////////////////////////////////////////////////
+    		////////////////////////////////////////////////////////////////////////
+    		
+            //START BlueTooth SERVER 
+            
+    		btServer = new GeneralServer();
+    		
+    		btServer.init( "", this);
+    		
+    		btServer.query();
+    		
+    		////////////////////////////////////////////////////////////////////////
+
+    	
+            
             setMainForm(r2);
         } catch (Throwable ex) {
             ex.printStackTrace();
@@ -85,7 +107,7 @@ public class MainMID extends MIDlet implements ActionListener{
 	}
 
 	
-	
+	private Transition buttonTrans = Transition3D.createStaticRotation(500, false);
 	private void setMainForm(Resources r) {
         UIManager.getInstance().setResourceBundle(r.getL10N("localize", "en"));
 
@@ -96,7 +118,7 @@ public class MainMID extends MIDlet implements ActionListener{
             protected void sizeChanged(int w, int h) {
                 super.sizeChanged(w, h);
                 try {
-                    setMainForm(Resources.open("/resources.res"));
+                    setMainForm(Resources.open("/icons.res"));
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -115,7 +137,7 @@ public class MainMID extends MIDlet implements ActionListener{
 
         final ButtonActionListener bAListner = new ButtonActionListener();
         for (int i = 0; i < formApps.length; i++) {
-            Image temp = r.getImage(formApps[i].getName() + "_sel.png");
+            Image temp = r.getImage(formApps[i].getName() + "_Sel.png");
             selectedImages[i] = temp;
             unselectedImages[i] = r.getImage(formApps[i].getName() + "_unsel.png");
             final Button b = new Button(formApps[i].getName(), unselectedImages[i]) {
@@ -136,14 +158,15 @@ public class MainMID extends MIDlet implements ActionListener{
             b.addActionListener(bAListner);
             b.addFocusListener(new FocusListener() {
 
-                public void focusGained(Component cmp) {
-                	mainMenu.replace(b, b, Transition3D.createRotation(200, true));
+                public void focusGained(Component cmp) {                	
                     /*if (componentTransitions != null) {
                         mainMenu.replace(b, b, componentTransitions);
                     }*/
                 }
 
                 public void focusLost(Component cmp) {
+                	//TODO: Testar codigo para efeito de rotacao no botao
+                	//mainMenu.replace(b, b, buttonTrans);
                 }
             });
 
@@ -248,4 +271,57 @@ public class MainMID extends MIDlet implements ActionListener{
                 "please visit the demo help screen. For more details, please " +
                 "contact us at dev.ivan@gmail.com.";
     }
+    
+    
+    ///////////////////////////////////////////////////////////////
+    
+    public void handleAction(byte action, Object param1, Object param2) {				
+		
+		DevicePoint endpt = (DevicePoint) param1;
+		ProtoPackage pkt = (ProtoPackage) param2;
+		
+		
+		if( pkt.application == Constants.APP_GENERAL ) {			
+			//General must be handled HERE!			
+		}
+		else if( pkt.application == Constants.APP_CHAT ){
+			//TODO: Checar se o form atual eh do Chat... 			
+			currentForm.handleAction(action, param1, param2);
+			
+		}
+		else if( pkt.application == Constants.APP_PROFILE ){
+			
+			
+		}
+		else if( pkt.application == Constants.APP_FILETRANSFER ){
+			
+			
+		} 			  
+	}
+
+	public void send(byte app, byte cmd, String msg){
+		
+		ProtoPackage senderPkt = new ProtoPackage(
+					app,
+					cmd, 
+					btServer.localName,
+					"", //Will be replaced by the correct destination
+					msg
+				); 
+		btServer.sendPacket(senderPkt);		
+	}
+	
+	public void sendSingle(String deviceName, byte app, byte cmd, String msg){
+		
+		ProtoPackage senderPkt = new ProtoPackage(
+					app,
+					cmd, 
+					btServer.localName,
+					deviceName,
+					msg
+				); 
+		btServer.sendPacket(senderPkt, deviceName);		
+	}
+	///////////////////////////////////////////////////////////////
+
 }
