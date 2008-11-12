@@ -3,9 +3,6 @@ package mobile.lib;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.nio.ByteBuffer;
-
-import com.sun.lwuit.List;
 
 public class ProtoPackage {
 		  // signal, must be one of GeneralServer.SIGNAL_XXX
@@ -32,7 +29,7 @@ public class ProtoPackage {
 
 		  public static ProtoPackage getProtoPackage(byte[] arrBytes)
 		  {  
-			  
+			  Util.Log("ARRBYTES RECEIVED!");
 			  ProtoPackage pkt = new ProtoPackage();
 			  
 			  ByteArrayInputStream bb = new ByteArrayInputStream(arrBytes);			 		
@@ -81,12 +78,13 @@ public class ProtoPackage {
 
 		  public byte[] getBytes() throws Exception{
 			  
-			  
+
 			  //PROTOCOLO: SOH STX APP[1] CMD[1] ORIG[16] DEST[16] NCHAR[1] DATA ETX EOT 			 
 			  
-			  byte[] btAux = new byte[512];
 			  //Build the ProtoPacket that will be sent
-			  ByteBuffer bb = ByteBuffer.wrap(btAux);			 
+			  ByteArrayOutputStream bb = new ByteArrayOutputStream(296);			  
+			  
+			  DataOutputStream dos = new DataOutputStream(bb);			
 			  
 			  // 16 bytes to Sender			  
 			  byte[] btSender 	= sender.getBytes();
@@ -98,135 +96,59 @@ public class ProtoPackage {
 			  
 			  // XXXX bytes to the Message 
 			  byte[] btMessage	= msg.getBytes();			  			  
-			  if( btMessage.length>255 ) throw new Exception("Invalid byte application size. Max Size 255");			  			 
-			  
-			  bb.position(0);
-			  //SOH
-			  bb.put( (byte)0x01 );
+			  if( btMessage.length>255 ) throw new Exception("Invalid byte application size. Max Size 255");			  			 			  
+
+			  //SOH			  
+			  dos.write( (byte)0x01);
+
 			  //STX
-			  bb.put( (byte)0x02 );
+			  dos.write(  (byte)0x02 );			  
 			  
-			  bb.put( application );
+			  dos.write( application );
 			  
-			  bb.put( command );
-			  			  
-			  bb.position(20-btSender.length); //Calculated to fix 16 bytes
-			  bb.put(btSender);
-			  bb.position(36-btReceiver.length); //Calculated to fix 16 bytes
-			  bb.put(btReceiver);
+			  dos.write( command );
+			  		  
+			  byte[] btAuxSender = new byte[16-btSender.length];
+			  dos.write(btAuxSender);
+			  dos.write(btSender);
+			  
+			  byte[] btAuxReceiver = new byte[16-btReceiver.length];  
+			  dos.write(btAuxReceiver);
+			  dos.write(btReceiver);			  
 			  
 			  //NCHAR
-			  bb.put((byte)btMessage.length);
+			  dos.write( (byte)btMessage.length);
 			  
-			  bb.put(btMessage);
+			  dos.write(btMessage);
 			  
 			  //ETX
-			  bb.put( (byte)0x03 );
+			  dos.write( (byte)0x03 );
 
 			  //EOT
-			  bb.put( (byte)0x04 );
+			  dos.write( (byte)0x04 );
+
+			  int falta = 296-bb.size();
 			  
-			  byte[] btArray = bb.array();
+			  dos.write(new byte[falta]);
 			  
-			  Util.Log("ARRAY: "+new String(btArray));
+			  dos.flush();			  		
 			  
-			  return btArray;
-			  
-		  }		 
-			
-//		  public byte[] getBytes() throws Exception{
-//			  
-//			  
-//			  //PROTOCOLO: SOH STX APP[1] CMD[1] ORIG[16] DEST[16] NCHAR[1] DATA ETX EOT 			 
-//			  
-//			//Build the ProtoPacket that will be sent
-//			  ByteArrayOutputStream bb = new ByteArrayOutputStream();			  
-//			  
-//			  DataOutputStream dos = new DataOutputStream(bb);			  			 
-//			  
-//			  // 16 bytes to Sender			  
-//			  byte[] btSender 	= sender.getBytes();
-//			  if( btSender.length>16 ) throw new Exception("Invalid byte sender size");
-//			  
-//			  // 16 bytes to Receiver
-//			  byte[] btReceiver = receiver.getBytes();
-//			  if( btReceiver.length>16 ) throw new Exception("Invalid byte receiver size");			
-//			  
-//			  // XXXX bytes to the Message 
-//			  byte[] btMessage	= msg.getBytes();			  			  
-//			  if( btMessage.length>255 ) throw new Exception("Invalid byte application size. Max Size 255");			  			 
-//			  
-//			  //bb.reset();
-//			  
-//			  //bb.position(0);
-//
-//			  //SOH			  
-//			  dos.write( (byte)0x01);
-//			  //bb.put( (byte)0x01 );
-//			  //STX
-//			  dos.write(  (byte)0x02 );
-//			  
-//			  dos.write( (byte)application );
-//			  
-//			  dos.write( (byte)command );
-//			  		  
-//			  /*byte[] btAuxSender = new byte[16];
-//			  int aux = 16-btSender.length;
-//			  for(int i=0;i<btSender.length;i++){
-//				  btAuxSender[i+aux] = btSender[i];
-//			  }*/
-//			  byte[] btAuxSender = new byte[16-btSender.length];
-//			  for(int i=0;i<btAuxSender.length;i++){
-//				  btAuxSender[i] = (byte)0;
-//			  }
-//			  dos.write(btAuxSender);
-//			  dos.write(btSender);
-//
-//			  /*byte[] btAuxReceiver = new byte[16];
-//			  aux = 16-btReceiver.length;
-//			  for(int i=0;i<btReceiver.length;i++){
-//				  btAuxReceiver[i+aux] = btReceiver[i];
-//			  }*/
-//			  byte[] btAuxReceiver = new byte[16-btReceiver.length];
-//			  for(int i=0;i<btAuxReceiver.length;i++){
-//				  btAuxReceiver[i] = (byte)0;
-//			  }
-//				  
-//			  dos.write(btAuxReceiver);
-//			  dos.write(btReceiver);
-//			  
-//
-//			  Util.Log(" Write bytes after receiver: "+bb.size());
-//			  
-//			  //bb.position(20-btSender.length); //Calculated to fix 16 bytes
-//			  //bb.put(btSender);
-//			  //bb.position(36-btReceiver.length); //Calculated to fix 16 bytes
-//			  //bb.put(btReceiver);
-//			  
-//			  //NCHAR
-//			  dos.write( (byte)btMessage.length);
-//			  
-//			  dos.write(btMessage);
-//			  
-//			  //ETX
-//			  dos.write( (byte)0x03 );
-//
-//			  //EOT
-//			  dos.write( (byte)0x04 );
-//			  
-//
-//			  
-//			  dos.flush();
-//			  
-//			  
-//			  
-//			  byte[] btArray = bb.toByteArray(); 
-//			  
-//			  Util.Log("PKT GENERATED: "+btArray.length);
-//			  
-//			  Util.Log("Array: "+ bb.toString());
-//			  
-//			  return btArray;
-//			  
-//		  }		  
+			  byte[] btArray = bb.toByteArray(); 			  
+			  			 			 
+			  return btArray;			  
+		  }		
+		  
+			static void showArrayData(
+					byte[] array){
+				System.out.println(
+				"Show array data");
+				for(int cnt = 0; 
+				cnt < array.length; cnt++){
+					System.out.print(
+							array[cnt] + " ");
+					if((cnt+1)%12 == 0)
+						System.out.println();//line
+				}//end for loop
+				System.out.println();//blank line
+			}//end showArrayData
 	}
