@@ -15,7 +15,7 @@ public class Chat extends Form implements CommandListener {
 
 	private MainMenu parent; // referencia para o menu
 
-	private Command start; // comando para iniciar o aplicativo
+	private Command s // comando para iniciar o aplicativo
 	private Command exit; // comando para sair da aplicação
 	private Room room;
 	private StringItem lbRoom;
