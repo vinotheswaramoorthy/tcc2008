@@ -1,0 +1,9 @@
+MIDlet-1: MainMID,,mobile.midlet.MainMID
+MIDlet-Jar-Size: 525517
+MIDlet-Jar-URL: TCCMobile2.jar
+MIDlet-Name: TCCMobile2 MIDlet Suite
+MIDlet-Permissions: javax.microedition.pim.ContactList.read,javax.microedition.pim.ContactList.write,javax.microedition.pim.EventList.read,javax.microedition.pim.EventList.write,javax.microedition.pim.ToDoList.read,javax.microedition.pim.ToDoList.write,javax.microedition.io.Connector.file.read,javax.microedition.io.Connector.file.write
+MIDlet-Vendor: MIDlet Suite Vendor
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
