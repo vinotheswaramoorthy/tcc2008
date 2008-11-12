@@ -72,7 +72,7 @@ public class FormRoom extends Form implements ActionListener{
 		this.addComponent(BorderLayout.CENTER, taTalking);
 		elementWidth = Math.max(taTalking.getPreferredW(), elementWidth);
 		
-		tfMessage = new TextField(15);
+		tfMessage = new TextField(10);
 		tfMessage.setMaxSize(100);
 		tfMessage.setRows(1);
 		tfMessage.requestFocus();

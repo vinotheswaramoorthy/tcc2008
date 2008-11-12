@@ -2,6 +2,7 @@ package mobile.chat;
 
 import java.util.Vector;
 
+import mobile.lib.BTListener;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
 import mobile.lib.GeneralServer;
@@ -26,7 +27,7 @@ import com.sun.lwuit.layouts.BoxLayout;
 import com.sun.lwuit.list.ListCellRenderer;
 import com.sun.lwuit.plaf.Border;
 
-public class FormChat extends BaseForm implements ActionListener{
+public class FormChat extends BaseForm implements BTListener,ActionListener{
 
 
 	//Lista total de salas
