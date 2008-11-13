@@ -84,19 +84,14 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
             UIManager.getInstance().setThemeProps(r1.getTheme(r1.getThemeResourceNames()[0]));
 
     		////////////////////////////////////////////////////////////////////////
-    		////////////////////////////////////////////////////////////////////////
-    		
+    		////////////////////////////////////////////////////////////////////////    	
+            
+            
             //START BlueTooth SERVER 
             
     		btServer = new GeneralServer();
     		
-    		btServer.init( "", this);
-    		
-    		btServer.query();
-    		
     		////////////////////////////////////////////////////////////////////////
-
-    	
             
             setMainForm(r2);
         } catch (Throwable ex) {
@@ -121,6 +116,16 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 	private void setMainForm(Resources r) {
         UIManager.getInstance().setResourceBundle(r.getL10N("localize", "en"));
 
+        final Splash frmSplash = new Splash();
+        frmSplash.show();
+        
+        
+		////////////////////////////////////////////////
+		btServer.init( "", this);
+		
+		btServer.query();
+		////////////////////////////////////////////////
+		
         // application logic determins the number of columns based on the screen size
         // this is why we need to be aware of screen size changes which is currently
         // only received using this approach
@@ -197,7 +202,9 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         mainMenu.addCommand(runCommand);
 
         mainMenu.setCommandListener(this);
-        mainMenu.show();
+
+        //mainMenu.show();             
+        frmSplash.finish(this, mainMenu);  
     }
 	
 	
