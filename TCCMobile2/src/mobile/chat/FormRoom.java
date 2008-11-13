@@ -70,17 +70,21 @@ public class FormRoom extends Form implements ActionListener{
 		taTalking = new TextArea(5,20,TextArea.ANY);
 		taTalking.setEditable(false);
 		this.addComponent(BorderLayout.CENTER, taTalking);
-		elementWidth = Math.max(taTalking.getPreferredW(), elementWidth);
+		elementWidth = Math.max(taTalking.getPreferredW(), elementWidth);	
+
+		////////////////////////////////////////////////////////////////////////
+		Container cntBottom = new Container();
+		Label lblTalk = new Label("Falar:");
+		cntBottom.addComponent(lblTalk);
 		
-		tfMessage = new TextField(10);
+		tfMessage = new TextField((Display.getInstance().getDisplayWidth() - lblTalk.getWidth()-30) /10);
 		tfMessage.setMaxSize(100);
 		tfMessage.setRows(1);
 		tfMessage.requestFocus();
-		
-		Container cntBottom = new Container();
-		cntBottom.addComponent(new Label("Falar:"));
 		cntBottom.addComponent(tfMessage);			
 		this.addComponent(BorderLayout.SOUTH, cntBottom);
+		//////////////////////////////////////////////////////////////////////
+		
 		elementWidth = Math.max(cntBottom.getPreferredW(), elementWidth);	
 		
 		this.addCommand(back);
@@ -148,14 +152,20 @@ public class FormRoom extends Form implements ActionListener{
 		} else if (event == Constants.EVENT_SENT) {
 			// nothing to do
 		} else if (event == Constants.EVENT_RECEIVED) {
+						
+			
 			// a new message has received from a remote user
 
 			Util.Log("EVENT_RECEIVED: "+pkt.msg);
 			
 			String[] receivedPk = Util.split(pkt.msg,"|");
 			
-			if(receivedPk.length>0){
+			if(receivedPk.length>0){				
 				if( receivedPk[0].equals(cr.getName())){
+					
+					if( !allDevices.contains(pkt.sender))
+						allDevices.addElement(pkt.sender);
+					
 					String msg = pkt.sender + " fala: ";
 					// render this message on screen
 					insertMessage(msg+receivedPk[1]);
