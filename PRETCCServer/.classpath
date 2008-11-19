@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ExtendProtocol"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/BLUECOVE"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MARGE"/>
+	<classpathentry kind="lib" path="C:/Program Files/eclipse/plugins/org.apache.axis.wsdl2java.eclipse_1.1.0.2/wsdl2javawizard.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
