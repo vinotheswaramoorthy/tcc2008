@@ -40,10 +40,10 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     private static final int RUN_COMMAND = 2;
     private static final int BACK_COMMAND = 3;
     private static final int ABOUT_COMMAND = 4;
-    private static final Command runCommand = new Command("Run", RUN_COMMAND);
-    private static final Command exitCommand = new Command("Exit", EXIT_COMMAND);
-    private static final Command backCommand = new Command("Back", BACK_COMMAND);
-    private static final Command aboutCommand = new Command("About", ABOUT_COMMAND);
+    private static final Command runCommand = new Command("Executar", RUN_COMMAND);
+    private static final Command exitCommand = new Command("Sair", EXIT_COMMAND);
+    private static final Command backCommand = new Command("Voltar", BACK_COMMAND);
+    private static final Command aboutCommand = new Command("Sobre", ABOUT_COMMAND);
     
     private static final BaseForm[] formApps = new BaseForm[]{
     	new FormChat(),
@@ -152,9 +152,11 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 
         final ButtonActionListener bAListner = new ButtonActionListener();
         for (int i = 0; i < formApps.length; i++) {
-            Image temp = r.getImage(formApps[i].getName() + "_Sel.png");
+            Image temp = r.getImage(formApps[i].getIconName() + "_Sel.png");
+            temp.scale(48,48);
             selectedImages[i] = temp;
-            unselectedImages[i] = r.getImage(formApps[i].getName() + "_unsel.png");
+            unselectedImages[i] = r.getImage(formApps[i].getIconName() + "_unsel.png");
+            unselectedImages[i].scale(48, 48);
             final Button b = new Button(formApps[i].getName(), unselectedImages[i]) {
 
                 public Image getPressedIcon() {
@@ -193,7 +195,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         //screen width
         cols = width / elementWidth;
         int rows = formApps.length / cols;
-        mainMenu.setLayout(new GridLayout(rows, cols));
+        mainMenu.setLayout(new GridLayout(2, 2));
 
         //mainMenu.addComponent(BorderLayout.CENTER, mainContainer);
 
@@ -262,13 +264,13 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
                 System.gc();
                 break;
             case ABOUT_COMMAND:
-                Form aboutForm = new Form("About");
+                Form aboutForm = new Form("Sobre");
                 aboutForm.setScrollable(false);
                 aboutForm.setLayout(new BorderLayout());
                 TextArea aboutText = new TextArea(getAboutText(), 5, 10);
                 aboutText.setEditable(false);
                 aboutForm.addComponent(BorderLayout.CENTER, aboutText);
-                aboutForm.addCommand(new Command("Back") {
+                aboutForm.addCommand(new Command("Voltar") {
 
                     public void actionPerformed(ActionEvent evt) {
                         mainMenu.show();
@@ -315,8 +317,8 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 			
 		}
 		else if( pkt.application == Constants.APP_FILETRANSFER ){
-			
-			
+			FormFileTransfer formFileTransfer = (FormFileTransfer)formApps[1];
+			formFileTransfer.handleAction(action, param1, param2);			
 		} 			  
 	}
 
