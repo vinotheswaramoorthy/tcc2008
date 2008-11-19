@@ -44,9 +44,14 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 	private FormRoom fRoom;
 	
 	public void cleanup() {    }
+	
 	public String getName() {
+		return "Bate-Papo";
+	}
+	public String getIconName() {
 		return "Chat";
 	}
+	
 	protected String getHelp() {
 		return "Bate-papo com amigos, através do bluetooth.  " +
 		" Você pode conversar através de salas próprias ou de seus amigos.";
