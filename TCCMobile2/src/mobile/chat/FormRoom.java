@@ -8,8 +8,10 @@ import mobile.lib.DevicePoint;
 import mobile.lib.ProtoPackage;
 import mobile.lib.Util;
 import mobile.midlet.MainMID;
+import mobile.ui.BaseForm;
 
 import com.sun.lwuit.Command;
+import com.sun.lwuit.Component;
 import com.sun.lwuit.Container;
 import com.sun.lwuit.Display;
 import com.sun.lwuit.Form;
@@ -18,6 +20,7 @@ import com.sun.lwuit.TextArea;
 import com.sun.lwuit.TextField;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
+import com.sun.lwuit.geom.Dimension;
 import com.sun.lwuit.layouts.BorderLayout;
 
 public class FormRoom extends Form implements ActionListener{
@@ -73,19 +76,24 @@ public class FormRoom extends Form implements ActionListener{
 		elementWidth = Math.max(taTalking.getPreferredW(), elementWidth);	
 
 		////////////////////////////////////////////////////////////////////////
-		Container cntBottom = new Container();
-		Label lblTalk = new Label("Falar:");
-		cntBottom.addComponent(lblTalk);
-		
-		tfMessage = new TextField((Display.getInstance().getDisplayWidth() - lblTalk.getWidth()-30) /10);
+		//Container cntBottom = new Container();
+		//Label lblTalk = new Label("Falar:");
+		//cntBottom.addComponent(lblTalk);
+		//elementWidth = Math.max(cntBottom.getPreferredW(), elementWidth);
+		/*tfMessage = new TextField((Display.getInstance().getDisplayWidth() - lblTalk.getWidth()-30) /10);
 		tfMessage.setMaxSize(100);
 		tfMessage.setRows(1);
-		tfMessage.requestFocus();
 		cntBottom.addComponent(tfMessage);			
-		this.addComponent(BorderLayout.SOUTH, cntBottom);
+		this.addComponent(BorderLayout.SOUTH, cntBottom);*/
+		tfMessage = new TextField();
+		tfMessage.setEditable(true);
+		//tfMessage.setHandlesInput(true);
+		tfMessage.setMaxSize(200);
+		this.addComponent( BorderLayout.SOUTH, createPair("Falar:",tfMessage,0) );
+		tfMessage.requestFocus();
 		//////////////////////////////////////////////////////////////////////
 		
-		elementWidth = Math.max(cntBottom.getPreferredW(), elementWidth);	
+		//	
 		
 		this.addCommand(back);
 		this.addCommand(send);
@@ -95,7 +103,7 @@ public class FormRoom extends Form implements ActionListener{
 	
 	private void insertMessage(String message){
 		taTalking.setText(taTalking.getText()+
-				"\r\n"+
+				"\n"+
 				message);
 	}
 
@@ -186,5 +194,15 @@ public class FormRoom extends Form implements ActionListener{
 		}
 	}
 	
-	
+    protected Container createPair(String label, Component c, int minWidth) {
+        Container pair = new Container(new BorderLayout());
+        Label l =  new Label(label);
+        Dimension d = l.getPreferredSize();
+        d.setWidth(Math.max(d.getWidth(), minWidth));
+        l.setPreferredSize(d);
+        l.getStyle().setBgTransparency(100);
+        pair.addComponent(BorderLayout.WEST,l);
+        pair.addComponent(BorderLayout.CENTER, c);
+        return pair;
+    }
 }
