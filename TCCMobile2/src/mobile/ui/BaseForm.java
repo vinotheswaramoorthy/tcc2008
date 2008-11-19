@@ -16,6 +16,8 @@ public abstract class BaseForm {
      */
     public abstract String getName();
     
+    public abstract String getIconName();
+    
     private MainMID _midlet;
     protected MainMID getMidlet(){
     	
@@ -33,14 +35,14 @@ public abstract class BaseForm {
         this._midlet = midlet;
         
         //Adiciona o botão de HELP para todos os formulários
-        formItem.addCommand(new Command("Help") {
+        formItem.addCommand(new Command("Ajuda") {
             public void actionPerformed(ActionEvent evt) {
-                Form helpForm = new Form("Help");
+                Form helpForm = new Form("Ajuda");
                 helpForm.setLayout(new BorderLayout());
                 TextArea helpText = new TextArea(getHelpImpl(), 5, 10);
                 helpText.setEditable(false);
                 helpForm.addComponent(BorderLayout.CENTER, helpText);
-                Command c = new Command("Back") {
+                Command c = new Command("Voltar") {
                     public void actionPerformed(ActionEvent evt) {
                     	formItem.show();
                     }
