@@ -32,9 +32,10 @@ public class FormConfig extends BaseForm{
 		
 		Container cntList = new Container(new BoxLayout(BoxLayout.Y_AXIS));
 		cntList.setScrollable(true);
+		
 		cntList.addComponent(getConfigItem("Nome"));
 		cntList.addComponent(getConfigItem("Apelido"));
-		cntList.addComponent(getConfigItem("Foto"));
+		cntList.addComponent(getConfigItem("Foto"));		
 		
 		Label lblSexo = new Label("Sexo");
 		lblSexo.getStyle().setBgTransparency(0);		
@@ -52,7 +53,9 @@ public class FormConfig extends BaseForm{
 		lblDesc.getStyle().setBgTransparency(0);
 		cntList.addComponent(lblDesc);
 		int max = Display.getInstance().getDisplayWidth();
-		cntList.addComponent(new TextArea( String.valueOf( 10 ), 4, max/10 ));
+		TextArea txtDesc = new TextArea();
+		txtDesc.setRows(3);
+		cntList.addComponent(txtDesc);
 		
 		
 		
@@ -61,13 +64,17 @@ public class FormConfig extends BaseForm{
 	
 	private Component getConfigItem(String label){
 	
-		Container cnt = new Container(new BorderLayout());
+		/*Container cnt = new Container(new BorderLayout());
 		Label lbl = new Label(label);	
 		lbl.getStyle().setBgTransparency(0);
 		cnt.addComponent( BorderLayout.NORTH, lbl);
 		int cols = (Display.getInstance().getDisplayWidth() - lbl.getWidth()) /11;
 		TextField txt = new TextField(cols);
-		cnt.addComponent( BorderLayout.CENTER, txt);
+		cnt.addComponent( BorderLayout.CENTER, txt);*/
+		
+		TextArea c = new TextArea();
+		c.getStyle().setBgTransparency(100);		
+		Container cnt = createPair(label, c);
 		
 		return cnt;
 	}
