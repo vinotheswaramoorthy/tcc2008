@@ -19,6 +19,7 @@ import mobile.ui.BaseForm;
 
 import com.sun.lwuit.Button;
 import com.sun.lwuit.Component;
+import com.sun.lwuit.Display;
 import com.sun.lwuit.Font;
 import com.sun.lwuit.Form;
 import com.sun.lwuit.Image;
@@ -30,6 +31,7 @@ import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.events.FocusListener;
 import com.sun.lwuit.layouts.BoxLayout;
+import com.sun.lwuit.layouts.GridLayout;
 import com.sun.lwuit.plaf.Style;
 import com.sun.lwuit.util.Resources;
 
@@ -65,6 +67,10 @@ public class FormFileTransfer extends BaseForm{
 	
 	//configura o nome do form
 	public String getName() {
+		return "Compartilhar Arquivos";
+	}
+	
+	public String getIconName() {
 		return "FileTransfer";
 	}
 
@@ -121,6 +127,7 @@ public class FormFileTransfer extends BaseForm{
 		//inicialização do botão para procurar outro usuários
 		btnUsers = createButton("Procurar Usuários",users);
 		
+		/*
 		//botão de teste
 		try {
 			btnTest = createButton("Test",Image.createImage("/semaforo.png"));
@@ -129,11 +136,28 @@ public class FormFileTransfer extends BaseForm{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		
 		//altera o tipo de transição do form
         f.setTransitionOutAnimator(CommonTransitions.createFade(400));
+        //retira o scroll do form
         f.setSmoothScrolling(false);
 
+
+        //pega o largura da tela
+        int width = Display.getInstance().getDisplayWidth();
+        //pega a largura dos botões
+        int elementWidth = Math.max(btnShare.getPreferredW(), 2);
+        //calcula o número de colunas de botões que cabem na tela
+        int cols = width / elementWidth;
+        //calcula o número de linhas de botões que cabem na tela
+        int rows = 2 / cols;
+        
+        //configura o layout do form
+        f.setLayout(new GridLayout(rows, cols));        
+        
+
+        
 		//adiciona o botão ao form
 		f.addComponent(btnShare);
 		//adiciona o botão ao form
@@ -246,11 +270,9 @@ public class FormFileTransfer extends BaseForm{
 		DevicePoint endpt = (DevicePoint) param1;
 		ProtoPackage pkt = (ProtoPackage) param2;
 		
-		if( pkt.application == Constants.APP_FILETRANSFER){
-			Util.Log("invoke FileTransfer handleAction. action=" + pkt.command);
-			Util.Log("Remote user: "+pkt.sender);
-			Util.Log("Message Received: " + pkt.msg);
-		}
+		Util.Log("invoke FileTransfer handleAction. action=" + pkt.command);
+		Util.Log("Remote user: "+pkt.sender);
+		Util.Log("Message Received: " + pkt.msg);		
 		
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			formSearchUsers.handleAction(action, param1, param2);

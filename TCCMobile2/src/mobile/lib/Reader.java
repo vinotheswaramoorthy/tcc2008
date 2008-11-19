@@ -10,7 +10,7 @@ public class Reader implements Runnable
 
   public Reader() {
   }
-
+ 
   /**
    * set 'done' flag to true, which will exit the while loop
    */
@@ -33,6 +33,8 @@ public class Reader implements Runnable
         datain.readFully(dataPkt);
         
         ProtoPackage pkt = ProtoPackage.getProtoPackage(dataPkt);
+        
+        if(pkt != null){
         
         if( pkt.command == Constants.CMD_HANDSHAKE){
         	
@@ -100,7 +102,7 @@ public class Reader implements Runnable
         	Util.Log("Calling APPLICATION ");
         	endpt.callback.handleAction(pkt.command, endpt, pkt);
         }
-
+        }
       } // while !done
 
       datain.close();

@@ -33,6 +33,7 @@ public class GeneralServer implements Runnable
   // reference to BListener implementation. for BlueChat event callback
   BTListener callback = null;
 
+  
   boolean done = false;
 
   public String localName = "";

@@ -34,13 +34,11 @@ public class ProtoPackage {
 			  
 			  ByteArrayInputStream bb = new ByteArrayInputStream(arrBytes);			 		
 			  
+			  
  			 //PROTOCOLO: SOH STX APP[1] CMD[1] ORIG[16] DEST[16] NCHAR[1] DATA ETX EOT
-			  
-			  
 			  
 			  if( bb.read()!=0x01 ) return null;
 
-			  
 			  if( bb.read()!=0x02 ) return null;
 
 			  pkt.application  = (byte)bb.read();
@@ -57,6 +55,7 @@ public class ProtoPackage {
 			  pkt.receiver = new String(btReceiv).trim();			  
 			  
 			  byte nchar = (byte)bb.read();
+			  
 			  //End, so get out! 
 			  if( nchar == 0x03 || nchar == 0x04) return null;
 			  if( nchar!= 0x00 )
@@ -71,7 +70,6 @@ public class ProtoPackage {
 			  
 			  if ( bb.read()!=0x03 ) return null;
 			  if ( bb.read()!=0x04 ) return null;			  
-			  
 			  return pkt;
 			  
 		  }

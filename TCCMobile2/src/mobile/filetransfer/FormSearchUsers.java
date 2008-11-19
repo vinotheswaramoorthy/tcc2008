@@ -90,6 +90,8 @@ public class FormSearchUsers extends Form implements ActionListener {
 		
 		//carrega o list
 		this.loadList();
+		
+		midlet.send(Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, this.getUIID());
 	}
 	
 	public void loadList(){
@@ -100,9 +102,6 @@ public class FormSearchUsers extends Form implements ActionListener {
 		System.gc();
 		//remove todos os componentes do form
 		removeAll();
-		
-		usersVector.addElement("Elemento 1");
-		usersVector.addElement("Elemento 2");
 		
 		//cria a lista com os itens do vector
 		list = new List(usersVector);
@@ -136,6 +135,10 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * Tratamento dos eventos deste form
 	 */
 	public void actionPerformed(ActionEvent evt) {
+		
+		//log para mostrar que entrou no action performed do searchusers
+		Util.Log("Entry actonPerfomed - Search Users");
+		
 		//verifica se o evento vem do comando de voltar
 		if(back == evt.getSource()){
 			//volta para a tela anterior
@@ -152,20 +155,25 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * Evento disparado qdo recebe dados para o FileTransfer no bluetooth
 	 */
 	public void handleAction(byte action, Object param1, Object param2) {		
+		//objeto para acessar as informações do parametro 1
 		DevicePoint endpt = (DevicePoint) param1;
+		//objeto para acessar as informações do parametro 2
 		ProtoPackage pkt = (ProtoPackage) param2;
 			
+		//gera log para mostrar que entrou no evento de search users
+		Util.Log("File Transfer - SearchUsers Received");
 		//verifica se é uma resposta do frame de busca de usuários
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			//verifica se o sender está procurando usuários
-			if (pkt.msg == "Searching Users"){
-				midlet.sendSingle("", Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, "Fernando");
+			if (pkt.msg.equals("Searching Users")){
+				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, "Fernando");
 			}
 			else {
 				//verifica se este usuário já está na lista
-				if((usersVector.indexOf(pkt.sender))==-1)
+				if((usersVector.indexOf(pkt.msg))==-1)
 					//caso nao esteja, coloca ele na lista
-					usersVector.addElement(pkt.sender);
+					usersVector.addElement(pkt.msg);
+				loadList();
 			}
 		}
 		
@@ -179,7 +187,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 	   	public ButtonsList(){
 	   		try {
 	   			//carrega a imagem do resource
-	   			imageIcon = Image.createImage("/icons/Soldier32.png");
+	   			imageIcon = Image.createImage("/icons/elvis1.png");
 	   		} catch (IOException ex) {
 	   			//exibe mensagem de erro
 	   			System.out.println("Não foi possível carregar os icones");

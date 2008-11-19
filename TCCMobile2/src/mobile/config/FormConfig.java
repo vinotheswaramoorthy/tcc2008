@@ -73,8 +73,13 @@ public class FormConfig extends BaseForm{
 	}
 
 	public String getName() {
+		return "Configurações";
+	}
+	
+	public String getIconName() {
 		return "Config";
 	}
+	
 
 	public void handleAction(byte action, Object param1, Object param2) {
 		// TODO Auto-generated method stub

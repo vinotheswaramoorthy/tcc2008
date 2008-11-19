@@ -30,7 +30,7 @@ import com.sun.lwuit.plaf.Border;
 import com.sun.perseus.j2d.Box;
 
 public class FormSelFiles extends Form implements ActionListener{
-
+ 
 	//referencia para o form que abriu este form
 	private FormSharedFiles parent;
 	//objeto para listar os arquivos e diretórios
@@ -58,7 +58,7 @@ public class FormSelFiles extends Form implements ActionListener{
     //comando para descompartilhar o arquivo
     private Command unshare = new Command("Descompartilhar",3);;
 	//comando para retornar para o parent
-	private Command back = new Command("Back",1);
+	private Command back = new Command("Voltar",1);
 
 	
 	/**
