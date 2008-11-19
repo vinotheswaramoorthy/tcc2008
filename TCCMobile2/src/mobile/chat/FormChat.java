@@ -1,5 +1,7 @@
 package mobile.chat;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import mobile.lib.BTListener;
@@ -69,8 +71,10 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
         
 		fRoom = new FormRoom(f,this.getMidlet());
 		
+		
 		//////////////////////////////////////////////////////////////
-		getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
+		//getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
+		AtualizarSalas();
 		////////////////////////////////////////////////////////////		
 	
 		Command cmdCreateRoom = new Command("Criar Sala"){
@@ -157,8 +161,9 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 				
 				String[] dataReceived = Util.split(pkt.msg, "|"); 
 				
-				if( dataReceived.length>1){				
-					itensList.addItem( new ChatRoom( pkt.sender,dataReceived[0],dataReceived[1]));					
+				if( dataReceived.length>1){
+					ChatRoom cr = new ChatRoom( pkt.sender,dataReceived[0],dataReceived[1]);
+					itensList.addItem(cr);					
 				}
 			}
 		} 
@@ -166,10 +171,34 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 		{
 			fRoom.handleAction(event, endpt, pkt);	
 		}
-
-
-
 	}
+	
+	public static final long TEMPO = ( 3000 * 10 ); //atualiza o site a cada 30 segundos   
+	  
+	   Timer timer = null;   
+	   
+	   public void AtualizarSalas() {   
+	      if( timer == null ) {   
+	         timer = new Timer();   
+	         TimerTask tarefa = new TimerTask() {   
+	            public void run() {   
+	               try {   
+	            	   //////////////////////////////////////////////////////////////
+	            	   //Send in broadcast
+	           			getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
+	           		   ////////////////////////////////////////////////////////////			          
+	               }   
+	               catch(Exception e){   
+	                  e.printStackTrace();   
+	               }   
+	                 
+	            }   
+	         };   
+	         timer.scheduleAtFixedRate(tarefa, TEMPO, TEMPO);   
+	      }   
+	   }  
+	
+	
 	
 	class ChatRoom {
 
