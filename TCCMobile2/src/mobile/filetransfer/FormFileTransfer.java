@@ -55,7 +55,7 @@ public class FormFileTransfer extends BaseForm{
 	public Hashtable sharedTable = new Hashtable();
 
 	//lista com os usuários encontrados
-	public Vector usersVector = new Vector();
+	public Hashtable usersTable = new Hashtable();
 	
 	//buffer para construção dos frames a serem enviados
 	private byte[] bufferFrames;

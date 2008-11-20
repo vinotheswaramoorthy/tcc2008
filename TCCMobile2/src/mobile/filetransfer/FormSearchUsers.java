@@ -1,6 +1,8 @@
 package mobile.filetransfer;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.microedition.midlet.MIDlet;
@@ -29,6 +31,9 @@ public class FormSearchUsers extends Form implements ActionListener {
 	//referencia ao form que fez a chamada a esta tela
 	private Form parent;
 	
+	//tela para carregar os arquivos do usuário selecionado na lista
+	private FormRemoteUserFiles formRemoteUserFiles;
+	
 	//objeto para listar os usuários encontrados
 	private List list;
 	
@@ -38,12 +43,15 @@ public class FormSearchUsers extends Form implements ActionListener {
 	//vector para armazenar os usuários encontrados
 	private Vector usersVector = new Vector();
 	
+	//tabela para armazenar o nome dos dispositivos relacionado com os friendlynames
+	private Hashtable usersTable = new Hashtable();
+	
 	//comando para retornar a tela anterior
 	private Command back = new Command("Sair");
 	//comando para procurar os usuários
 	private Command searchUsers = new Command("Procurar Usuários");
 	//comando para visualizar arquivos
-	private Command getUserFiles = new Command("Vizualizar Arquivos");
+	private Command getUserFiles = new Command("Visualizar Arquivos");
 	//comando para enviar arquivos para o usuário
 	private Command sendFile = new Command("Enviar Arquivo");
 	
@@ -53,11 +61,11 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * @param mainMid
 	 * @param usersVector
 	 */
-	public FormSearchUsers(Form parent, MainMID mainMid,Vector usersVector){
+	public FormSearchUsers(Form parent, MainMID mainMid,Hashtable usersTable){
 		//utiliza o outro construtor
 		this(parent, mainMid);
 		//cria referencia para o users vector do form principal do FileTransfer
-		this.usersVector = usersVector;
+		this.usersTable = usersTable;
 	}
 	
 	/**
@@ -91,7 +99,8 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//carrega o list
 		this.loadList();
 		
-		midlet.send(Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, this.getUIID());
+		//envia o comando para procurar usuários disponíveis 
+		midlet.send(Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, "Searching Users");
 	}
 	
 	public void loadList(){
@@ -102,6 +111,16 @@ public class FormSearchUsers extends Form implements ActionListener {
 		System.gc();
 		//remove todos os componentes do form
 		removeAll();
+		//apaga todos os elementos do vector
+		usersVector.removeAllElements();
+		
+		//carrega os usuário da tabela
+		Enumeration e = usersTable.keys();
+		//carrega os keys no vector
+		while(e.hasMoreElements()){
+			//adiciona a chave encontrada ao vector
+			usersVector.addElement(e.nextElement());
+		}
 		
 		//cria a lista com os itens do vector
 		list = new List(usersVector);
@@ -147,7 +166,28 @@ public class FormSearchUsers extends Form implements ActionListener {
 		
 		//verifica se o evento vem do comando de procurar usuários
 		if(searchUsers == evt.getSource()){
+			//limpa a hashtable para receber a nova lista
+			usersTable.clear();
+			//limpa o vector que será passado para o list
+			usersVector.removeAllElements();
+			//envia o frame requisitando os usuários disponíveis
 			midlet.send(Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, "Searching Users");
+		}
+		
+		//verifica se o evento vem do comando de visualizar os arquivos compartilhados
+		if(getUserFiles == evt.getSource()){
+			//carrega o nome do usuário que está sendo selecionado
+			String userName = list.getSelectedItem().toString();
+			//verifica se o objeto formRemoteUserFiles é nulo
+			if(formRemoteUserFiles == null)
+				//caso seja, instacia com o nome do usuário selecionado
+				formRemoteUserFiles = new FormRemoteUserFiles(userName,this);
+			else
+				//caso já esteja instanciado, somente altera o nome do form
+				formRemoteUserFiles.setTitle(userName);
+		
+			//abre a tela com os arquivos do usuário
+			formRemoteUserFiles.show();
 		}
 	}
 	
@@ -166,13 +206,15 @@ public class FormSearchUsers extends Form implements ActionListener {
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			//verifica se o sender está procurando usuários
 			if (pkt.msg.equals("Searching Users")){
-				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS, "Fernando");
+				//envia o nome do contato para o dispositivo que requisitou os usuários disponíveis
+				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS,"Nome:"+midlet.getMyDeviceName());
 			}
-			else {
+			else{
 				//verifica se este usuário já está na lista
-				if((usersVector.indexOf(pkt.msg))==-1)
+				if(!usersTable.containsKey(pkt.msg))
 					//caso nao esteja, coloca ele na lista
-					usersVector.addElement(pkt.msg);
+					usersTable.put(pkt.msg,pkt.sender);
+				//atualiza a lista de usuários
 				loadList();
 			}
 		}
@@ -180,9 +222,9 @@ public class FormSearchUsers extends Form implements ActionListener {
 	}
 
 	
-   class ButtonsList extends Button implements ListCellRenderer{
-	   //objeto para carregar a icone do arquivo
-	   private Image imageIcon;
+	class ButtonsList extends Button implements ListCellRenderer{
+		//objeto para carregar a icone do arquivo
+		private Image imageIcon;
    	
 	   	public ButtonsList(){
 	   		try {
@@ -224,4 +266,8 @@ public class FormSearchUsers extends Form implements ActionListener {
 			return this;
 		}
    }   
+   
+   public MainMID getMainMid(){
+	   return midlet;
+   }
 }

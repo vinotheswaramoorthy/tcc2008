@@ -79,8 +79,8 @@ public class FormSharedFiles extends Form implements ActionListener {
 	}
 	
 	/**
-	 * Adiciona um item ao hash table e atualiza o vetor 
-	 */
+f	 * Adiciona um item ao hash table e atualiza o vetor 
+f	 */
 	public void put(Object key, Object value){
 		//coloca a chave e o valor recebidos no hashtable
 		hashItems.put(key, value);
