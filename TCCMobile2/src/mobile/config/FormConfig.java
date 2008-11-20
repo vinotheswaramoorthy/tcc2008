@@ -1,11 +1,24 @@
 package mobile.config;
 
-import javax.microedition.lcdui.Displayable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.util.Vector;
 
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.rms.RecordStore;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
+import javax.microedition.rms.RecordStoreNotFoundException;
+import javax.microedition.rms.RecordStoreNotOpenException;
 import mobile.ui.BaseForm;
 
+import com.sun.lwuit.ButtonGroup;
+import com.sun.lwuit.Command;
 import com.sun.lwuit.Component;
 import com.sun.lwuit.Container;
+import com.sun.lwuit.Dialog;
 import com.sun.lwuit.Display;
 import com.sun.lwuit.Form;
 import com.sun.lwuit.Label;
@@ -22,6 +35,16 @@ import com.sun.lwuit.plaf.UIManager;
 
 public class FormConfig extends BaseForm{
 
+	private RecordStore rs;
+	final private String REC_STORE = "beehiveprofile";
+	
+	private TextArea txtName;
+	private TextArea txtNickname;
+	private TextArea txtPic;
+	private RadioButton rbM;
+	private RadioButton rbF;
+	private TextArea txtDesc;
+	
 	protected void execute(Form f) {
 
 		f.setTitle("Configurações");
@@ -33,51 +56,59 @@ public class FormConfig extends BaseForm{
 		Container cntList = new Container(new BoxLayout(BoxLayout.Y_AXIS));
 		cntList.setScrollable(true);
 		
-		cntList.addComponent(getConfigItem("Nome"));
-		cntList.addComponent(getConfigItem("Apelido"));
-		cntList.addComponent(getConfigItem("Foto"));		
+		txtName = new TextArea();
+		txtName.getStyle().setBgTransparency(100);
+		
+		txtNickname = new TextArea();
+		txtNickname.getStyle().setBgTransparency(100);
+		
+		txtPic = new TextArea();
+		txtPic.getStyle().setBgTransparency(100);
+		
+		cntList.addComponent(createPair("Nome",txtName));
+		cntList.addComponent(createPair("Apelido",txtNickname));
+		cntList.addComponent(createPair("Foto",txtPic));		
 		
 		Label lblSexo = new Label("Sexo");
 		lblSexo.getStyle().setBgTransparency(0);		
 		cntList.addComponent(lblSexo);
 		
-		RadioButton rbM = new RadioButton("Masculino");
+		Container radioButtonsPanel = new Container(new BoxLayout(BoxLayout.Y_AXIS));		
+		rbM = new RadioButton("Masculino");
 		rbM.getStyle().setBgTransparency(0);
-		cntList.addComponent(rbM);
-		
-		RadioButton rbF = new RadioButton("Feminino");
+		radioButtonsPanel.addComponent(rbM);
+
+		rbF = new RadioButton("Feminino");
 		rbF.getStyle().setBgTransparency(0);
-		cntList.addComponent(rbF);
+		radioButtonsPanel.addComponent(rbF);
+		
+		ButtonGroup bgSexo = new ButtonGroup();
+		bgSexo.add(rbM);
+		bgSexo.add(rbF);
+		
+		cntList.addComponent(radioButtonsPanel);
 		
 		Label lblDesc = new Label("Descrição");
 		lblDesc.getStyle().setBgTransparency(0);
 		cntList.addComponent(lblDesc);
 		int max = Display.getInstance().getDisplayWidth();
-		TextArea txtDesc = new TextArea();
+		txtDesc = new TextArea();
 		txtDesc.setRows(3);
-		cntList.addComponent(txtDesc);
-		
-		
+		cntList.addComponent(txtDesc);			
 		
 		f.addComponent(BorderLayout.CENTER,cntList);
-	}
-	
-	private Component getConfigItem(String label){
-	
-		/*Container cnt = new Container(new BorderLayout());
-		Label lbl = new Label(label);	
-		lbl.getStyle().setBgTransparency(0);
-		cnt.addComponent( BorderLayout.NORTH, lbl);
-		int cols = (Display.getInstance().getDisplayWidth() - lbl.getWidth()) /11;
-		TextField txt = new TextField(cols);
-		cnt.addComponent( BorderLayout.CENTER, txt);*/
 		
-		TextArea c = new TextArea();
-		c.getStyle().setBgTransparency(100);		
-		Container cnt = createPair(label, c);
+		Command cmdSave = new Command("Salvar"){
+			public void actionPerformed(ActionEvent evt) {
+				super.actionPerformed(evt);
+				saveProfile();
+				Dialog.show("Alerta","Registros salvos com sucesso.","Ok","Cancelar");
+			}
+		};
+		f.addCommand(cmdSave);
 		
-		return cnt;
-	}
+		loadProfile();
+	}	
 
 	public String getName() {
 		return "Configurações";
@@ -88,9 +119,104 @@ public class FormConfig extends BaseForm{
 	}
 	
 
-	public void handleAction(byte action, Object param1, Object param2) {
-		// TODO Auto-generated method stub
-		
+	public void handleAction(byte action, Object param1, Object param2) {		
+	}
+	
+	public boolean saveProfile()
+	{
+		boolean success = false;
+		try
+		{
+			RMSOpen();
+	        // Write data into an internal byte array
+			ByteArrayOutputStream strmBytes = new ByteArrayOutputStream();
+			// Write Java data types into the above byte array
+			DataOutputStream strmDataType = new DataOutputStream(strmBytes);
+
+			strmDataType.writeUTF(txtName.getText());
+			strmDataType.writeUTF(txtNickname.getText());
+			strmDataType.writeUTF(txtPic.getText());	
+			strmDataType.writeUTF(txtDesc.getText());
+			strmDataType.writeBoolean(rbM.isSelected());
+			strmDataType.writeBoolean(rbF.isSelected());			
+         	strmDataType.flush();
+         	byte[] record = strmBytes.toByteArray();
+
+     		//System.out.println(rs.getNumRecords());
+         	if(rs.getNumRecords() == 0)
+         		rs.addRecord(record, 0, record.length);
+         	else rs.setRecord(1,record, 0, record.length);
+
+     		strmBytes.reset();
+			strmBytes.close();
+			strmDataType.close();
+			success = true;
+		}
+		catch (Exception e)
+		{
+	       e.printStackTrace();
+     	}
+		finally
+		{
+			RMSClose();
+		}
+		return success;
+	}
+
+	public boolean loadProfile()
+	{
+		boolean success = false;
+	    try
+	    {
+	    	RMSOpen();
+	    	if(rs.getNumRecords() > 0)
+	    	{
+		    	byte[] recData = new byte[50];
+		    	ByteArrayInputStream strmBytes = new ByteArrayInputStream(recData);
+		    	DataInputStream strmDataType = new DataInputStream(strmBytes);
+
+		    	//System.out.println(rs.getNumRecords());
+		    	rs.getRecord(1, recData, 0);
+				
+				txtName.setText( strmDataType.readUTF() );
+				txtNickname.setText(  strmDataType.readUTF() );
+				txtPic.setText(  strmDataType.readUTF() );
+				txtDesc.setText( strmDataType.readUTF() );
+				rbM.setSelected( strmDataType.readBoolean() );
+				rbF.setSelected( strmDataType.readBoolean() );
+				
+		    	strmBytes.reset();
+		    	strmBytes.close();
+		    	strmDataType.close();
+		    	success = true;
+	    	}
+     	}
+     	catch (Exception e)
+     	{
+     		e.printStackTrace();
+     	}
+     	finally
+     	{
+     		RMSClose();
+     	}
+     	return success;
+	}
+
+	
+	private void RMSOpen() throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException
+	{
+		rs = RecordStore.openRecordStore(REC_STORE , true);
+	}
+
+	private void RMSClose()
+	{
+		try {
+			rs.closeRecordStore();
+		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
