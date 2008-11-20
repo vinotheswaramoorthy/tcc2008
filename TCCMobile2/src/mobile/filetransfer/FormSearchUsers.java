@@ -29,7 +29,7 @@ import com.sun.lwuit.list.ListCellRenderer;
 public class FormSearchUsers extends Form implements ActionListener {
 
 	//referencia ao form que fez a chamada a esta tela
-	private Form parent;
+	private FormFileTransfer parent;
 	
 	//tela para carregar os arquivos do usuário selecionado na lista
 	private FormRemoteUserFiles formRemoteUserFiles;
@@ -61,7 +61,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * @param mainMid
 	 * @param usersVector
 	 */
-	public FormSearchUsers(Form parent, MainMID mainMid,Hashtable usersTable){
+	public FormSearchUsers(FormFileTransfer parent, MainMID mainMid,Hashtable usersTable){
 		//utiliza o outro construtor
 		this(parent, mainMid);
 		//cria referencia para o users vector do form principal do FileTransfer
@@ -73,7 +73,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * @param parent
 	 * @param mainMid
 	 */
-	public FormSearchUsers(Form parent, MainMID mainMid){
+	public FormSearchUsers(FormFileTransfer parent, MainMID mainMid){
 		//coloca o nome do form
 		this.setTitle("Buscar Usuários");
 		//configura a referencia para a tela anterior
@@ -176,18 +176,10 @@ public class FormSearchUsers extends Form implements ActionListener {
 		
 		//verifica se o evento vem do comando de visualizar os arquivos compartilhados
 		if(getUserFiles == evt.getSource()){
-			//carrega o nome do usuário que está sendo selecionado
-			String userName = list.getSelectedItem().toString();
-			//verifica se o objeto formRemoteUserFiles é nulo
-			if(formRemoteUserFiles == null)
-				//caso seja, instacia com o nome do usuário selecionado
-				formRemoteUserFiles = new FormRemoteUserFiles(userName,this);
-			else
-				//caso já esteja instanciado, somente altera o nome do form
-				formRemoteUserFiles.setTitle(userName);
-		
-			//abre a tela com os arquivos do usuário
-			formRemoteUserFiles.show();
+			//pega o id do usuário do hashtable
+			String remoteUserID = (String)usersTable.get(list.getSelectedItem());
+			//envia a solicitação dos arquivos que o usuários disponibilizou
+			midlet.sendSingle(remoteUserID, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTFILES, "Request Files");			
 		}
 	}
 	
@@ -219,6 +211,51 @@ public class FormSearchUsers extends Form implements ActionListener {
 			}
 		}
 		
+		if(pkt.command == Constants.CMD_REQUESTFILES){
+			//verifica se o frame está requisitando os arquivos disponibilizados
+			if(pkt.msg.equals("Request Files")){
+				//chama o frame para montar e mandar a lista de arquivos
+				sendListFiles(pkt.sender);
+			}
+			//caso esteja recebendo a lista 
+			else{
+				String received[] = Util.split(pkt.msg, "|");
+			
+				//carrega o nome do usuário que está sendo selecionado
+				String userName = list.getSelectedItem().toString();
+				
+				//verifica se o objeto formRemoteUserFiles é nulo
+				if(formRemoteUserFiles == null){
+					//caso seja, instacia com o nome do usuário selecionado
+					formRemoteUserFiles = new FormRemoteUserFiles(userName,this, received);
+				}
+				else{
+					//caso já esteja instanciado, somente altera o nome do form
+					formRemoteUserFiles.setTitle(userName);
+					//carrega a lista no form
+					formRemoteUserFiles.createListFiles(received);
+				}
+				//abre a tela com os arquivos do usuário
+				formRemoteUserFiles.show();
+
+			}
+		}
+		
+	}
+
+	private void sendListFiles(String sender){
+		//carrega os nomes dos arquivos no enumeration
+		Enumeration e = parent.sharedTable.keys();
+		//cria uma string para montar o frame com os nomes dos arquivo
+		String bufferSend = (String)e.nextElement();
+		//temina de montar o frame com os nomes dos arquivos para enviar
+		while(e.hasMoreElements()){
+			bufferSend = bufferSend + "|" + e.nextElement();
+		}
+		//envia o frame com os nomes dos arquivos para o usuário que requisitou
+		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTFILES, bufferSend);
+		//cria um log com o frame montado
+		Util.Log("Frame result: " + bufferSend);
 	}
 
 	

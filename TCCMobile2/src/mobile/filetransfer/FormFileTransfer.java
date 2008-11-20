@@ -42,6 +42,9 @@ public class FormFileTransfer extends BaseForm{
 	//form para busca de usuários com o mesmo aplicativo ligado
 	private FormSearchUsers formSearchUsers;
 	
+	//referencia para o form onde será apresentado
+	private Form formRef;
+	
 	//botões para acessar os funcionalidades do aplicativo
 	private Button btnUsers, btnShare, btnTest;
 	//objetos para carregar os icones
@@ -81,6 +84,8 @@ public class FormFileTransfer extends BaseForm{
 	}
 
 	protected void execute(Form f) {
+		this.formRef = f;
+		
 		//bloco try prevendo problema na abertura dos arquivos
 		try {
 			//carrega o icone de compatilhamento de arquivo
@@ -99,7 +104,7 @@ public class FormFileTransfer extends BaseForm{
 		//verifica se o formSearchUsers já foi instanciado
 		if(formSearchUsers == null)
 			//form para busca de usuários com arquivos compartilhados
-			formSearchUsers = new FormSearchUsers(f, getMidlet());
+			formSearchUsers = new FormSearchUsers(this, getMidlet());
 		
 		//listener para receber os eventos do dos botões
 		actionListener = new ActionListener(){
@@ -127,17 +132,6 @@ public class FormFileTransfer extends BaseForm{
 		//inicialização do botão para procurar outro usuários
 		btnUsers = createButton("Procurar Usuários",users);
 		
-		/*
-		//botão de teste
-		try {
-			btnTest = createButton("Test",Image.createImage("/semaforo.png"));
-			f.addComponent(btnTest);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		
 		//altera o tipo de transição do form
         f.setTransitionOutAnimator(CommonTransitions.createFade(400));
         //retira o scroll do form
@@ -155,8 +149,6 @@ public class FormFileTransfer extends BaseForm{
         
         //configura o layout do form
         f.setLayout(new GridLayout(rows, cols));        
-        
-
         
 		//adiciona o botão ao form
 		f.addComponent(btnShare);
@@ -262,22 +254,34 @@ public class FormFileTransfer extends BaseForm{
 		//retorna o vetor com o arquivo dividido blocos de 240 bytes
 		return packages;
 	}
-
+	
 	/**
 	 * Evento disparado qdo recebe dados para o FileTransfer no bluetooth
 	 */
 	public void handleAction(byte action, Object param1, Object param2) {		
+		//objeto para maniputar o end point recebido
 		DevicePoint endpt = (DevicePoint) param1;
+		//objeto para manipular o protopackage recebido
 		ProtoPackage pkt = (ProtoPackage) param2;
 		
 		Util.Log("invoke FileTransfer handleAction. action=" + pkt.command);
 		Util.Log("Remote user: "+pkt.sender);
 		Util.Log("Message Received: " + pkt.msg);		
 		
-		if(pkt.command == Constants.CMD_REQUESTUSERS){
-			formSearchUsers.handleAction(action, param1, param2);
+		//verifica qual foi o comando recebido
+		switch(pkt.command){
+			//caso seja uma requisição de usuários
+			case Constants.CMD_REQUESTUSERS:
+			//ou caso seja um requisição de arquivos diponibilizados
+			case Constants.CMD_REQUESTFILES:
+				//passa a requisição para o formSearchUsers onde será tratado
+				formSearchUsers.handleAction(action, param1, param2);
+			break;
 		}
 		
 	}
-   
+
+	public void show(){
+		formRef.show();
+	}
 }

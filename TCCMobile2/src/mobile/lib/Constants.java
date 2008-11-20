@@ -30,6 +30,7 @@ public class Constants {
 	  public final static byte CMD_STARTSEND		= 0x51;
 	  public final static byte CMD_STOPSEND			= 0x52;
 	  public final static byte CMD_REQUESTSEND      = 0x53;
+	  public final static byte CMD_REQUESTFILES		= 0X54;
 	  
 	  /*
 	  public final static String EVENT_JOIN = "join";
