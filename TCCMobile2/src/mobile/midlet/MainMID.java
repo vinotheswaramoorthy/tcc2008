@@ -29,6 +29,7 @@ import mobile.lib.BTListener;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
 import mobile.lib.GeneralServer;
+import mobile.lib.MobConfig;
 import mobile.lib.ProtoPackage;
 import mobile.lib.Util;
 import mobile.profile.FormProfile;
@@ -83,15 +84,14 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
             Resources r1 = Resources.open("/businessTheme.res");
             UIManager.getInstance().setThemeProps(r1.getTheme(r1.getThemeResourceNames()[0]));
 
+    		////////////////////////////////////////////////////////////////////////    	                       
+            //START BlueTooth SERVER             
+    		btServer = new GeneralServer();    		
     		////////////////////////////////////////////////////////////////////////
-    		////////////////////////////////////////////////////////////////////////    	
-            
-            
-            //START BlueTooth SERVER 
-            
-    		btServer = new GeneralServer();
     		
-    		////////////////////////////////////////////////////////////////////////
+    		//////////////////////////////////////////////////////////////////////
+    		MobConfig.reloadProfile();
+    		//////////////////////////////////////////////////////////////////////
             
             setMainForm(r2);
         } catch (Throwable ex) {
