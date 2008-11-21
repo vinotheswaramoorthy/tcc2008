@@ -30,7 +30,7 @@ public class Reader implements Runnable
         Util.Log("waiting for next signal from "+endpt.remoteName);
 
         byte[] dataPkt = new byte[296];
-        datain.readFully(dataPkt);
+        datain.read(dataPkt);
         
         ProtoPackage pkt = ProtoPackage.getProtoPackage(dataPkt);
         
