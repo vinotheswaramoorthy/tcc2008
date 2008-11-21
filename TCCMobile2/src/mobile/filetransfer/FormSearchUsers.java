@@ -1,10 +1,14 @@
 package mobile.filetransfer;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
 import javax.microedition.midlet.MIDlet;
 
 import mobile.filetransfer.FormSharedFiles.ButtonsList;
@@ -46,6 +50,9 @@ public class FormSearchUsers extends Form implements ActionListener {
 	//tabela para armazenar o nome dos dispositivos relacionado com os friendlynames
 	private Hashtable usersTable = new Hashtable();
 	
+	//local para salvar os arquivos recebidos
+	public final String saveDir = "file://root1/";
+	
 	//comando para retornar a tela anterior
 	private Command back = new Command("Sair");
 	//comando para procurar os usuários
@@ -61,7 +68,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 	 * @param mainMid
 	 * @param usersVector
 	 */
-	public FormSearchUsers(FormFileTransfer parent, MainMID mainMid,Hashtable usersTable){
+	public FormSearchUsers(FormFileTransfer parent, MainMID mainMid, Hashtable usersTable){
 		//utiliza o outro construtor
 		this(parent, mainMid);
 		//cria referencia para o users vector do form principal do FileTransfer
@@ -122,7 +129,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			usersVector.addElement(e.nextElement());
 		}
 		
-		//cria a lista com os itens do vector
+		//cria a lista com os itens do vector	
 		list = new List(usersVector);
         //configura para não mostrar a borda
         list.setBorderPainted(false);
@@ -148,6 +155,16 @@ public class FormSearchUsers extends Form implements ActionListener {
         this.revalidate();
         //redesenha o lista para cobrir o lista anterior
         this.repaint();
+	}
+
+	/**
+	 * retorn a id do nick passado como parametro
+	 * @param userNick
+	 * @return
+	 */
+	public String getUserID(String userNick){
+		//busca o id no hashtable e retorna o id relacionado a ele
+		return (String)usersTable.get(userNick);
 	}
 	
 	/**
@@ -179,7 +196,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			//pega o id do usuário do hashtable
 			String remoteUserID = (String)usersTable.get(list.getSelectedItem());
 			//envia a solicitação dos arquivos que o usuários disponibilizou
-			midlet.sendSingle(remoteUserID, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTFILES, "Request Files");			
+			midlet.sendSingle(remoteUserID, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTLIST, "Request Files");			
 		}
 	}
 	
@@ -194,6 +211,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			
 		//gera log para mostrar que entrou no evento de search users
 		Util.Log("File Transfer - SearchUsers Received");
+
 		//verifica se é uma resposta do frame de busca de usuários
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			//verifica se o sender está procurando usuários
@@ -211,7 +229,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			}
 		}
 		
-		if(pkt.command == Constants.CMD_REQUESTFILES){
+		if(pkt.command == Constants.CMD_REQUESTLIST){
 			//verifica se o frame está requisitando os arquivos disponibilizados
 			if(pkt.msg.equals("Request Files")){
 				//chama o frame para montar e mandar a lista de arquivos
@@ -219,6 +237,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			}
 			//caso esteja recebendo a lista 
 			else{
+				//utiliza o split para separar os nomes dos arquivos que estão no campo de mensagens
 				String received[] = Util.split(pkt.msg, "|");
 			
 				//carrega o nome do usuário que está sendo selecionado
@@ -240,7 +259,6 @@ public class FormSearchUsers extends Form implements ActionListener {
 
 			}
 		}
-		
 	}
 
 	private void sendListFiles(String sender){
@@ -253,7 +271,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			bufferSend = bufferSend + "|" + e.nextElement();
 		}
 		//envia o frame com os nomes dos arquivos para o usuário que requisitou
-		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTFILES, bufferSend);
+		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTLIST, bufferSend);
 		//cria um log com o frame montado
 		Util.Log("Frame result: " + bufferSend);
 	}
@@ -304,7 +322,30 @@ public class FormSearchUsers extends Form implements ActionListener {
 		}
    }   
    
+	private void saveFile(String url, byte[] file){
+		//cria um objeto fileconnection para criar o arquivo
+		FileConnection fc;
+		try{
+			//recebe a url com o endereço onde será criado o arquivo
+			fc = (FileConnection)Connector.open(url);
+			//verifica se o arquivo jah existe
+			if(!fc.exists())
+				fc.create();	
+			//cria um outputa stream para salvar os dados
+			OutputStream rawOut = fc.openOutputStream();
+			//salva o array de bytes recebido como parametro
+			rawOut.write(file);
+			//fecha o objeto que acessou o arquivo
+			fc.close();
+		}
+		catch(IOException e){
+			//log caso nao consiga acessar o url
+			Util.Log("Erro ao salvar o arquivo");
+		}
+	}
+	
    public MainMID getMainMid(){
+	   //retorna o midlet principal da aplicação
 	   return midlet;
    }
 }

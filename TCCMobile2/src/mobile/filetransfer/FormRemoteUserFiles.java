@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Vector;
 
 import mobile.filetransfer.FormSearchUsers.ButtonsList;
+import mobile.lib.Constants;
+import mobile.lib.Util;
 import mobile.midlet.MainMID;
 
 import com.sun.lwuit.Button;
@@ -21,7 +23,10 @@ import com.sun.lwuit.list.ListCellRenderer;
 public class FormRemoteUserFiles extends Form implements ActionListener {
 
 	//referencia para a tela anterior
-	private Form parent;
+	private FormSearchUsers parent;
+	
+	//armazena o nickName do usuário
+	private String userNick;
 	
 	//objeto para listar os arquivos disponibilizado pelo usuário remoto
 	private List list;
@@ -37,6 +42,8 @@ public class FormRemoteUserFiles extends Form implements ActionListener {
 	public FormRemoteUserFiles(String title, FormSearchUsers parent, String[] files) {
 		//configura o titulo da tela
 		super("Arquivos de "+title);
+		//armazena o apelido do dono do arquivo para saber o seu id
+		userNick = title;
 		//configura o layout do form
 		setLayout(new BorderLayout());
 		//altera o tipo de transição
@@ -103,7 +110,14 @@ public class FormRemoteUserFiles extends Form implements ActionListener {
 		}
 		//verifica se o evento recebido é o de baixar o arquivo selecionado
 		if(download == evt.getSource()){
-			
+			//log para saber se está mandando o nome do arquivo e o id corretos
+			Util.Log("Requesting to remote user: " + (String)parent.getUserID(userNick)+
+						"\nFile: " + (String)list.getSelectedItem());
+			//envia a requisição do arquivo
+			midlet.sendSingle(parent.getUserID(userNick), 
+								Constants.APP_FILETRANSFER, 
+								Constants.CMD_REQUESTFILE, 
+								(String)list.getSelectedItem());
 		}
 	}
 

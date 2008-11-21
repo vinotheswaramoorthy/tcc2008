@@ -13,6 +13,7 @@ import javax.microedition.midlet.MIDlet;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
 import mobile.lib.ProtoPackage;
+import mobile.lib.Sender;
 import mobile.lib.Util;
 import mobile.midlet.MainMID;
 import mobile.ui.BaseForm;
@@ -46,7 +47,7 @@ public class FormFileTransfer extends BaseForm{
 	private Form formRef;
 	
 	//botões para acessar os funcionalidades do aplicativo
-	private Button btnUsers, btnShare, btnTest;
+	private Button btnUsers, btnShare;
 	//objetos para carregar os icones
 	private Image share, users;
 	//objeto para manipular o style dos componentes
@@ -117,11 +118,6 @@ public class FormFileTransfer extends BaseForm{
 				//verifica se o evento recebido foi do botão de busca de arquivos
 				if(evt.getSource() == btnUsers){
 					formSearchUsers.show();
-				}
-				
-				//verifica se o evento veio do botao de teste (somente para debug
-				if(evt.getSource() == btnTest){
-					mountPackages("Test.txt");
 				}
 			}
 		};
@@ -197,10 +193,27 @@ public class FormFileTransfer extends BaseForm{
 		//retorna o label montado
 		return fontLabel;
    }
+
+	public void sendFile(String userID, String fileName){
+		//carrega o caminho do arquivo para verificar se ele existe
+		String urlFile = sharedTable.get(fileName).toString();
+		
+		//verifica se o arquivo realmente está disponível
+		if(urlFile != null){
+			//cria o objeto com as informações do arquivo
+			FileInfo fileInfo = mountPackages(urlFile);
+		}
+		
+		
+	}
 	
-	private Vector mountPackages(String fileName){
+	private FileInfo mountPackages(String fileName){
 		//vetor para armazenar os pedaços de 240 bytes do arquivo
 		Vector packages = new Vector();
+		//recebe o tamanho do arquivo
+		long fileSize = 0;
+		//recebe o número de blocos
+		long numBlocks = 0;
 		//para abrir o arquivo (JSR75)
 		FileConnection fc = null;
 
@@ -208,13 +221,13 @@ public class FormFileTransfer extends BaseForm{
 		
 		try {
 			//abre a conexão com o arquivo utilizando o caminho armazenado no hashtable
-			fc = (FileConnection)Connector.open((String)sharedTable.get(fileName));
+			fc = (FileConnection)Connector.open(sharedTable.get(fileName).toString());
 			//cria o stream para acessar o conteudo do arquivod
 			InputStream is = fc.openInputStream();
 			//pega o tamanho do arquivo
-			long fileSize = fc.fileSize();
+			fileSize = fc.fileSize();
 			//verifica qtos blocos de 240 caracteres consegue montar
-			long numBlocks = fileSize / 240;
+			numBlocks = fileSize / 240;
 			
 			//configura o input stream para passar o conteudo do arquivo de 240 em 240 caracteres
 			is.mark(240);
@@ -246,13 +259,15 @@ public class FormFileTransfer extends BaseForm{
 										"\n" + new String((byte[])packages.elementAt(packages.size()-1)));
 			}
 			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//cria o objeto para centralizar as informações do arquivo
+		FileInfo fileInfo = new FileInfo(fileName,fileSize,packages);
 		//retorna o vetor com o arquivo dividido blocos de 240 bytes
-		return packages;
+		return fileInfo;
 	}
 	
 	/**
@@ -273,15 +288,78 @@ public class FormFileTransfer extends BaseForm{
 			//caso seja uma requisição de usuários
 			case Constants.CMD_REQUESTUSERS:
 			//ou caso seja um requisição de arquivos diponibilizados
-			case Constants.CMD_REQUESTFILES:
+			case Constants.CMD_REQUESTLIST:
 				//passa a requisição para o formSearchUsers onde será tratado
 				formSearchUsers.handleAction(action, param1, param2);
+			break;
+			//caso seja uma requisição de um arquivo especifico
+			case Constants.CMD_REQUESTFILE:
+				
 			break;
 		}
 		
 	}
 
+	
+	/**
+	 * chama o form, já que esta classe nao estende diretamento o form
+	 */
 	public void show(){
+		//metodo show() do form principal
 		formRef.show();
+	}
+	
+	//classe para centralizar as informações do arquivo
+	class FileInfo{
+		//armazena o nome do arquivo
+		private String 		fileName;
+		//armazena o tamanho do arquivo em bytes
+		private long  		fileSize;
+		//armazena o número de blocos de 240 bytes
+		private int 		numBlocks;
+
+		//armazena os blocos de 240 bytes 
+		private byte[][]  	fileBlocks;
+		
+		//construtor
+		public FileInfo(String fileName, long fileSize, Vector fileBlocks){
+			this.fileName = fileName;
+			this.fileSize = fileSize;
+			this.numBlocks = fileBlocks.size();
+			fileBlocks.copyInto(this.fileBlocks);
+		}
+		
+		//construtor
+		public FileInfo(String fileName, int numBlocks){
+			//configura o nome do arquivo
+			this.fileName = fileName;
+			//cria o array onde serão armazenados os bytes
+			this.fileBlocks = new byte[numBlocks][240];
+		}
+		
+		//insere o block na posição do array passado como parametro
+		public void putBlock(int numBlock, byte[] block){
+			this.fileBlocks[numBlock] = block;
+		}
+		
+		//retorna o nome do arquivo
+		public String getFileName(){
+			return this.fileName;
+		}
+		
+		//retorna o tamanho do arquivo
+		public long getFileSize(){
+			return this.fileSize;
+		}
+		
+		//retorna o numero de blocos do arquivo
+		public int getNumBlocks(){
+			return this.numBlocks;
+		}
+		
+		//retorna o array com os blocos do arquivo
+		public byte[][] getFileBlocks(){
+			return this.fileBlocks;
+		}
 	}
 }

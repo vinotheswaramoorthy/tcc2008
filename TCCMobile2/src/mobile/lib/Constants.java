@@ -29,8 +29,10 @@ public class Constants {
 	  public final static byte CMD_REQUESTUSERS 	= 0x50;
 	  public final static byte CMD_STARTSEND		= 0x51;
 	  public final static byte CMD_STOPSEND			= 0x52;
-	  public final static byte CMD_REQUESTSEND      = 0x53;
-	  public final static byte CMD_REQUESTFILES		= 0X54;
+	  public final static byte CMD_TRANSFERING		= 0x53;
+	  public final static byte CMD_REQUESTSEND      = 0x54;
+	  public final static byte CMD_REQUESTLIST		= 0x55;
+	  public final static byte CMD_REQUESTFILE 		= 0x56;
 	  
 	  /*
 	  public final static String EVENT_JOIN = "join";
