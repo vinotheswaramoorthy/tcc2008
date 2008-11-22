@@ -14,6 +14,7 @@ import javax.microedition.midlet.MIDlet;
 import mobile.filetransfer.FormSharedFiles.ButtonsList;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
+import mobile.lib.MobConfig;
 import mobile.lib.ProtoPackage;
 import mobile.lib.Util;
 import mobile.midlet.MainMID;
@@ -217,47 +218,51 @@ public class FormSearchUsers extends Form implements ActionListener {
 			//verifica se o sender está procurando usuários
 			if (pkt.msg.equals("Searching Users")){
 				//envia o nome do contato para o dispositivo que requisitou os usuários disponíveis
-				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTUSERS,"Nome:"+midlet.getMyDeviceName());
-			}
-			else{
-				//verifica se este usuário já está na lista
-				if(!usersTable.containsKey(pkt.msg))
-					//caso nao esteja, coloca ele na lista
-					usersTable.put(pkt.msg,pkt.sender);
-				//atualiza a lista de usuários
-				loadList();
+				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_RETURNUSER, MobConfig.getNickname());
+				Util.Log("Sending nick: " + MobConfig.getNickname());
 			}
 		}
 		
+		//retorno dos usuários disponíveis
+		if(pkt.command == Constants.CMD_RETURNUSER){
+			//verifica se este usuário já está na lista
+			if(!usersTable.containsKey(pkt.msg))
+				//caso nao esteja, coloca ele na lista
+				usersTable.put(pkt.msg,pkt.sender);
+			//atualiza a lista de usuários
+			loadList();
+		}
+		
+		//requisição dos arquivos
 		if(pkt.command == Constants.CMD_REQUESTLIST){
 			//verifica se o frame está requisitando os arquivos disponibilizados
 			if(pkt.msg.equals("Request Files")){
 				//chama o frame para montar e mandar a lista de arquivos
 				sendListFiles(pkt.sender);
 			}
-			//caso esteja recebendo a lista 
-			else{
-				//utiliza o split para separar os nomes dos arquivos que estão no campo de mensagens
-				String received[] = Util.split(pkt.msg, "|");
+		}
+		
+		//retorno dos arquivos solicitados
+		if(pkt.command == Constants.CMD_RETURNLIST){
+			//utiliza o split para separar os nomes dos arquivos que estão no campo de mensagens
+			String received[] = Util.split(pkt.msg, "|");
+		
+			//carrega o nome do usuário que está sendo selecionado
+			String userName = list.getSelectedItem().toString();
 			
-				//carrega o nome do usuário que está sendo selecionado
-				String userName = list.getSelectedItem().toString();
-				
-				//verifica se o objeto formRemoteUserFiles é nulo
-				if(formRemoteUserFiles == null){
-					//caso seja, instacia com o nome do usuário selecionado
-					formRemoteUserFiles = new FormRemoteUserFiles(userName,this, received);
-				}
-				else{
-					//caso já esteja instanciado, somente altera o nome do form
-					formRemoteUserFiles.setTitle(userName);
-					//carrega a lista no form
-					formRemoteUserFiles.createListFiles(received);
-				}
-				//abre a tela com os arquivos do usuário
-				formRemoteUserFiles.show();
-
+			//verifica se o objeto formRemoteUserFiles é nulo
+			if(formRemoteUserFiles == null){
+				//caso seja, instacia com o nome do usuário selecionado
+				formRemoteUserFiles = new FormRemoteUserFiles(userName,this, received);
 			}
+			else{
+				//caso já esteja instanciado, somente altera o nome do form
+				formRemoteUserFiles.setTitle(userName);
+				//carrega a lista no form
+				formRemoteUserFiles.createListFiles(received);
+			}
+			//abre a tela com os arquivos do usuário
+			formRemoteUserFiles.show();
 		}
 	}
 
@@ -271,7 +276,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 			bufferSend = bufferSend + "|" + e.nextElement();
 		}
 		//envia o frame com os nomes dos arquivos para o usuário que requisitou
-		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_REQUESTLIST, bufferSend);
+		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_RETURNLIST, bufferSend);
 		//cria um log com o frame montado
 		Util.Log("Frame result: " + bufferSend);
 	}

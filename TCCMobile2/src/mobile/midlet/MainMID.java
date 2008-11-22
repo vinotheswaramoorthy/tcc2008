@@ -347,6 +347,9 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 					deviceName,
 					msg
 				); 
+		
+		Util.Log("Testando o send single " + senderPkt.msg);
+		
 		btServer.sendPacket(senderPkt, deviceName);		
 	}
 	///////////////////////////////////////////////////////////////

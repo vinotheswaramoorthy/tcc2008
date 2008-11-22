@@ -74,6 +74,7 @@ public class FormFileTransfer extends BaseForm{
 		return "Compartilhar Arquivos";
 	}
 	
+	//retorna o nome do icone que será colocado no botão do midlet
 	public String getIconName() {
 		return "FileTransfer";
 	}
@@ -85,6 +86,7 @@ public class FormFileTransfer extends BaseForm{
 	}
 
 	protected void execute(Form f) {
+		//pega a referencia para o form do midlet
 		this.formRef = f;
 		
 		//bloco try prevendo problema na abertura dos arquivos
@@ -287,8 +289,12 @@ public class FormFileTransfer extends BaseForm{
 		switch(pkt.command){
 			//caso seja uma requisição de usuários
 			case Constants.CMD_REQUESTUSERS:
+			//comando de envio de usuário
+			case Constants.CMD_RETURNUSER:
 			//ou caso seja um requisição de arquivos diponibilizados
 			case Constants.CMD_REQUESTLIST:
+			//retorno dos arquivos requisitados
+			case Constants.CMD_RETURNLIST:
 				//passa a requisição para o formSearchUsers onde será tratado
 				formSearchUsers.handleAction(action, param1, param2);
 			break;
