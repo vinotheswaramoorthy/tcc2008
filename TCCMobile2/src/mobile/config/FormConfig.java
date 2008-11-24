@@ -12,6 +12,9 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
+
+import mobile.lib.Constants;
+import mobile.lib.MobConfig;
 import mobile.ui.BaseForm;
 
 import com.sun.lwuit.ButtonGroup;
@@ -102,7 +105,9 @@ public class FormConfig extends BaseForm{
 			public void actionPerformed(ActionEvent evt) {
 				super.actionPerformed(evt);
 				saveProfile();
-				Dialog.show("Alerta","Registros salvos com sucesso.","Ok","Cancelar");
+				MobConfig.reloadProfile();				
+				getMidlet().send(Constants.APP_GENERAL, Constants.CMD_UPDATEINFO, txtNickname.getText());
+				Dialog.show("Alerta","Registros salvos com sucesso.","Ok","Cancelar"); 
 			}
 		};
 		f.addCommand(cmdSave);

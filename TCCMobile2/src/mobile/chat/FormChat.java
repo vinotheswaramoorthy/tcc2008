@@ -56,10 +56,8 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 		return "Bate-papo com amigos, através do bluetooth.  " +
 		" Você pode conversar através de salas próprias ou de seus amigos.";
 	}
-
+	
 	protected void execute(Form f) {
-
-
 		f.setLayout(new BorderLayout());
 		//disable the scroll on the Form.
 		f.setScrollable(false);
@@ -74,11 +72,10 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 		
 		f.addComponent(BorderLayout.CENTER, itensList);
         
-		fRoom = new FormRoom(f,this.getMidlet());
-		
+		fRoom = new FormRoom(f,this.getMidlet());		
 		
 		//////////////////////////////////////////////////////////////
-		//getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
+		//Cria timer que atualiza as salas
 		AtualizarSalas();
 		////////////////////////////////////////////////////////////		
 	
@@ -123,7 +120,7 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 	
 	public void actionPerformed(ActionEvent evt) {
 		if( evt.getSource() == itensList){
-
+			
 		 	ChatRoom cr = (ChatRoom)itensList.getSelectedItem();
 			fRoom.setChatRoom(cr);
 			
@@ -187,11 +184,14 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 	         timer = new Timer();   
 	         TimerTask tarefa = new TimerTask() {   
 	            public void run() {   
-	               try {   
-	            	   //////////////////////////////////////////////////////////////
-	            	   //Send in broadcast
-	           			getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
-	           		   ////////////////////////////////////////////////////////////			          
+	               try {  
+	            	   if( !fRoom.getIsChatting() ) //Só envia a solicitação se não estiver na sala
+	            	   {
+	            		   //////////////////////////////////////////////////////////////
+	            		   //Send in broadcast
+	            		   getMidlet().send(Constants.APP_CHAT, Constants.EVENT_LISTCHAT, "listchats");
+	            		   ////////////////////////////////////////////////////////////
+	            	   }
 	               }   
 	               catch(Exception e){   
 	                  e.printStackTrace();   

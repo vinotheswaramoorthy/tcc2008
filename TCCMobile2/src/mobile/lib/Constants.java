@@ -16,6 +16,7 @@ public class Constants {
 	  public final static byte CMD_HANDSHAKE_ACK	= 0x34;
 	  public final static byte CMD_MESSAGE  		= 0x35;
 	  public final static byte CMD_INITIATED		= 0x36;
+	  public final static byte CMD_UPDATEINFO		= 0x3D;
 	  
 	  //Events
 	  public final static byte EVENT_JOIN			= 0x37;
@@ -23,7 +24,7 @@ public class Constants {
 	  public final static byte EVENT_SENT 			= 0x39;
 	  public final static byte EVENT_RECEIVED		= 0x3A;
 	  public final static byte EVENT_LISTCHAT		= 0x3B;
-	  public final static byte EVENT_LISTCHAT_ACK 	= 0x3C;
+	  public final static byte EVENT_LISTCHAT_ACK 	= 0x3C;	 
 	  
 	  //FileTransfer Commands
 	  public final static byte CMD_STARTSEND		= 0x51;
@@ -35,6 +36,8 @@ public class Constants {
 	  public final static byte CMD_REQUESTFILE 		= 0x57;
 	  public final static byte CMD_REQUESTUSERS 	= 0x58;
 	  public static final byte CMD_RETURNUSER 		= 0x59;
+	  
+	  //Profile Commands
 	  
 	  /*
 	  public final static String EVENT_JOIN = "join";

@@ -16,7 +16,7 @@ public class MobConfig {
 	final private static String REC_STORE = "beehiveprofile";
 	
 	private static String name;
-	private static String nickname;
+	private static String nickname = "";
 	private static String picture;
 	private static String description;
 	private static String sexo;

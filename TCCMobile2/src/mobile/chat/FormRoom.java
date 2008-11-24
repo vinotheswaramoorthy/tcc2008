@@ -5,6 +5,7 @@ import java.util.Vector;
 import mobile.chat.FormChat.ChatRoom;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
+import mobile.lib.MobConfig;
 import mobile.lib.ProtoPackage;
 import mobile.lib.Util;
 import mobile.midlet.MainMID;
@@ -128,7 +129,7 @@ public class FormRoom extends Form implements ActionListener{
 				midlet.sendSingle(deviceName,Constants.APP_CHAT, Constants.EVENT_RECEIVED, cr.getName() + "|" + msg);
 				
 			}			
-			String msgPrefix = midlet.getMyDeviceName() + " fala: ";
+			String msgPrefix = MobConfig.getNickname() + " fala: ";
 			//(char)13+(char)10
 			insertMessage(msgPrefix + msg);
 			tfMessage.setText("");
@@ -149,7 +150,7 @@ public class FormRoom extends Form implements ActionListener{
 			//Dados do pacote contém o nome da sala (poderiamos alterar para um ID)
 			if( pkt.msg.equals(cr.getName())){	
 				if( !allDevices.contains(pkt.sender)){
-					String msg = pkt.sender + " entrou na sala";
+					String msg = endpt.getNickname() + " entrou na sala";
 					allDevices.addElement(pkt.sender);
 					insertMessage(msg);								
 					
@@ -174,7 +175,7 @@ public class FormRoom extends Form implements ActionListener{
 					if( !allDevices.contains(pkt.sender))
 						allDevices.addElement(pkt.sender);
 					
-					String msg = pkt.sender + " fala: ";
+					String msg = endpt.getNickname() + " fala: ";
 					// render this message on screen
 					insertMessage(msg+receivedPk[1]);
 				}
@@ -185,7 +186,7 @@ public class FormRoom extends Form implements ActionListener{
 			
 			if( pkt.msg.equals(cr.getName())){
 			
-				String msg = pkt.sender + " sai da sala";
+				String msg = endpt.getNickname() + " sai da sala";
 				if( allDevices.contains(pkt.sender))
 					allDevices.removeElement(pkt.sender);
 				// 	display the leave message on screen

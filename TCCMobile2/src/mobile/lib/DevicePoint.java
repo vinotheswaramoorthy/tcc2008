@@ -28,6 +28,15 @@ public class DevicePoint
   String localName;
   // remote user nick name
   public String remoteName;
+  
+  private String nickname;
+  
+  public String getNickname(){
+	  return nickname;
+  }
+  public void setNickname(String nick){
+	  nickname = nick;
+  }
 
   // BTListener implementation for callback GeneralServer event
   BTListener callback;
@@ -53,6 +62,7 @@ public class DevicePoint
       // free connection, so it will give you exception
       //remoteName = rdev.getFriendlyName(false); // this is a temp name
     	remoteName = rdev.getBluetoothAddress();
+    	nickname = "n:"+remoteName;
     }
     catch (Exception ex) {
       remoteName = "Unknown";

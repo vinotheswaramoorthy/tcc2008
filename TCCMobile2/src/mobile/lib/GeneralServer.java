@@ -504,7 +504,7 @@ public class GeneralServer implements Runnable
         		  Constants.CMD_HANDSHAKE,
         		  localName,
         		  endpt.remoteName,
-        		  "");
+        		  MobConfig.getNickname());
         		  
           endpt.putPacket(pkt);
           //endpt.putPacket( new ProtoPackage(GeneralServer.SIGNAL_HANDSHAKE, localName) );

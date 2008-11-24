@@ -41,7 +41,7 @@ public class Sender implements Runnable {
 				if ( s != null )
 				{
 					// if there is a message to send, send it now
-					Util.Log("sending signal "+ Util.unsignedByteToInt(s.application)+"|| string '"+s.msg+"' to "+endpt.remoteName);
+					//Util.Log("sending signal "+ Util.unsignedByteToInt(s.application)+"|| string '"+s.msg+"' to "+endpt.remoteName);
 					
 					dataout.write(s.getBytes());									
 					/*dataout.writeInt(s.signal);

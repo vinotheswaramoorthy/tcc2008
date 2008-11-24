@@ -121,7 +121,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         
         
 		////////////////////////////////////////////////
-		btServer.init( "", this);
+		btServer.init("", this);
 		
 		btServer.query();
 		////////////////////////////////////////////////
@@ -304,7 +304,13 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 		}
 		
 		if( pkt.application == Constants.APP_GENERAL ) {			
-			//General must be handled HERE!			
+			//General must be handled HERE!	
+			
+			if( pkt.command == Constants.CMD_UPDATEINFO){
+				Util.Log("Received UpdateInfo: "+pkt.msg);
+				endpt.setNickname(pkt.msg);
+			}
+			
 		}
 		else if( pkt.application == Constants.APP_CHAT && currentForm!=null && currentForm.getClass().getName().endsWith("FormChat")){
 			//TODO: Checar se o form atual eh do Chat... 			
