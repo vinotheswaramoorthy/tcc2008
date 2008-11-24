@@ -56,11 +56,6 @@ public class ProtoPackage {
 			  
 			  byte nchar = (byte)bb.read();
 			  
-			  //End, so get out! 
-//			  if( nchar == 0x03 ){
-//				  Util.Log("Parsing ProtoPackage NCHR: 3 ou 4 - Sai fora!");
-//				  return null;			  	
-//			  }
 			  if( nchar!= 0x00 )
 			  {
 				  int msgLength = Util.unsignedByteToInt(nchar);
@@ -73,8 +68,6 @@ public class ProtoPackage {
 			  
 			  if ( bb.read()!=0x03 ) return null;
 			  if ( bb.read()!=0x04 ) return null;		
-			  
-			  Util.Log("=========================================");
 			  
 			  return pkt;
 			  
