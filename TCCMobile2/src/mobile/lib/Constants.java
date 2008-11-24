@@ -26,16 +26,27 @@ public class Constants {
 	  public final static byte EVENT_LISTCHAT		= 0x3B;
 	  public final static byte EVENT_LISTCHAT_ACK 	= 0x3C;	 
 	  
-	  //FileTransfer Commands
+	  /*FileTransfer Commands*/
+	  //comando de inicio de transmissão de arquivo
 	  public final static byte CMD_STARTSEND		= 0x51;
+	  //comando de finalização de transmissão do arquivo
 	  public final static byte CMD_STOPSEND			= 0x52;
+	  //comando para confirmação e requisição do proximo arquivo
 	  public final static byte CMD_TRANSFERING		= 0x53;
-	  public final static byte CMD_REQUESTSEND      = 0x54;
-	  public final static byte CMD_REQUESTLIST		= 0x55;
-	  public final static byte CMD_RETURNLIST		= 0x56;
-	  public final static byte CMD_REQUESTFILE 		= 0x57;
-	  public final static byte CMD_REQUESTUSERS 	= 0x58;
-	  public static final byte CMD_RETURNUSER 		= 0x59;
+	  //comando de confirmação dos frames de transferencia do arquivo
+	  public final static byte CMD_TRANSFERING_ACK	= 0x54;
+	  //comando para requisitar um novo arquivo
+	  public final static byte CMD_REQUESTSEND      = 0x55;
+	  //comando para requisitar a lista de arquivo
+	  public final static byte CMD_REQUESTLIST		= 0x56;
+	  //comando de retorno da lista de arquivos
+	  public final static byte CMD_RETURNLIST		= 0x57;
+	  //comando de requisição de arquivos
+	  public final static byte CMD_REQUESTFILE 		= 0x58;
+	  //comando de requisição da lista de usuários
+	  public final static byte CMD_REQUESTUSERS 	= 0x59;
+	  //comando de retorno da lista de usuários
+	  public static final byte CMD_RETURNUSER 		= 0x5A;
 	  
 	  //Profile Commands
 	  

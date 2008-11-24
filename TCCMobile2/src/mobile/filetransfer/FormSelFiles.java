@@ -126,7 +126,6 @@ public class FormSelFiles extends Form implements ActionListener{
 	            				public void run() {
 	            					//verifica se nome termina com uma barra ou se ".." para voltar ao diretorio anterior
 	            					if (currFile.endsWith(SEP_STR) || currFile.equals(UP_DIRECTORY)) {
-	            						Util.Log("CurrFile: " + currFile);
 	            						traverseDirectory(currFile);
 	            					}
 	            				}	
@@ -162,8 +161,6 @@ public class FormSelFiles extends Form implements ActionListener{
 			parent.put(list.getSelectedItem(),BASE_DIRECTORY + currDirName + list.getSelectedItem());
 			//atualiza a tela para trocar o icone normal com o de arquivo compartilhado
 			showCurrDir();
-			//imprime log do arquivo que foi compartilhado
-			Util.Log("Arquivo compartilhado: " + currDirName + list.getSelectedItem().toString());
 		}	
 	}
 	
@@ -173,7 +170,6 @@ public class FormSelFiles extends Form implements ActionListener{
 		//atualiza a  tela para trocar o icone de arquivo compartilhado com o de arquivo normal
 		showCurrDir();
 		//imprime log com o nome do arquivo que foi compartilhado
-		Util.Log(String.valueOf(parent.sharedItems.indexOf(list.getSelectedItem())));	
 	}
 	
 	 /**
@@ -188,7 +184,6 @@ public class FormSelFiles extends Form implements ActionListener{
         FileConnection currDir = null;
         
         try {
-        	Util.Log("Abrindo diretorio: " + currDirName);
         	//verifica se o diretorio atual é o raiz
             if (MEGA_ROOT.equals(currDirName)) {
             	//pega a lista carregada no midlet
@@ -206,7 +201,6 @@ public class FormSelFiles extends Form implements ActionListener{
             while(listDir.hasMoreElements())
             	vectorEnum.addElement(listDir.nextElement());
                        
-            Util.Log("Iniciando construção do list");
             //cria a lista passando o vector com a lista como argumento
             list = new List(vectorEnum);
             //configura para não mostrar a borda
@@ -246,7 +240,6 @@ public class FormSelFiles extends Form implements ActionListener{
     }    
 	
     void traverseDirectory(String fileName) {
-    	Util.Log("Entry traverseDirectory");
  
     	// verifica se está no raiz dos diretórios
         if (currDirName.equals(MEGA_ROOT)) {
@@ -262,9 +255,7 @@ public class FormSelFiles extends Form implements ActionListener{
             //volta para o diretório superior
         	//pega o proximo nome da url antes de encontrar outra barra
             int i = currDirName.lastIndexOf(SEP, currDirName.length() - 2);
-            
-            Util.Log("Verificando se há diretorio anterior: " + String.valueOf(i));
-            
+                        
             //verifica se há um diretorio anterior
             if (i != -1) {
             	//altera o diretório atual para o encontrado na url
@@ -277,9 +268,7 @@ public class FormSelFiles extends Form implements ActionListener{
         	//caso tenha entrado em um nivel abaixo no diretório
             currDirName = currDirName + fileName;
         }
-        
-        Util.Log("URL selecionada: "+ currDirName);
-        
+                
         //mostra o diretorio atual
         showCurrDir();
     }

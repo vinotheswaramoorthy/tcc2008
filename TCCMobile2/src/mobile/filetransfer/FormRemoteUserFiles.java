@@ -114,6 +114,7 @@ public class FormRemoteUserFiles extends Form implements ActionListener {
 			Util.Log("Requesting to remote user: " + (String)parent.getUserID(userNick)+
 						"\nFile: " + (String)list.getSelectedItem());
 			//envia a requisição do arquivo
+			Util.Log("NickName " + userNick + " userid " +  parent.getUserID(userNick));
 			midlet.sendSingle(parent.getUserID(userNick), 
 								Constants.APP_FILETRANSFER, 
 								Constants.CMD_REQUESTFILE, 

@@ -66,6 +66,11 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     	return FileSystemRegistry.listRoots();
     }
     
+    //retorna o diretório raiz
+    public static String getRoot(){
+    	return getRoot();
+    }
+    
 	protected void startApp() throws MIDletStateChangeException {
         try {
             Display.init(this);

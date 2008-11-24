@@ -170,12 +170,8 @@ public class FormSearchUsers extends Form implements ActionListener {
 	
 	/**
 	 * Tratamento dos eventos deste form
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		
-		//log para mostrar que entrou no action performed do searchusers
-		Util.Log("Entry actonPerfomed - Search Users");
-		
+	 */ 
+	public void actionPerformed(ActionEvent evt) {		
 		//verifica se o evento vem do comando de voltar
 		if(back == evt.getSource()){
 			//volta para a tela anterior
@@ -210,16 +206,12 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//objeto para acessar as informações do parametro 2
 		ProtoPackage pkt = (ProtoPackage) param2;
 			
-		//gera log para mostrar que entrou no evento de search users
-		Util.Log("File Transfer - SearchUsers Received");
-
 		//verifica se é uma resposta do frame de busca de usuários
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			//verifica se o sender está procurando usuários
 			if (pkt.msg.equals("Searching Users")){
 				//envia o nome do contato para o dispositivo que requisitou os usuários disponíveis
 				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_RETURNUSER, MobConfig.getNickname());
-				Util.Log("Sending nick: " + MobConfig.getNickname());
 			}
 		}
 		
@@ -278,7 +270,6 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//envia o frame com os nomes dos arquivos para o usuário que requisitou
 		midlet.sendSingle(sender, Constants.APP_FILETRANSFER, Constants.CMD_RETURNLIST, bufferSend);
 		//cria um log com o frame montado
-		Util.Log("Frame result: " + bufferSend);
 	}
 
 	
