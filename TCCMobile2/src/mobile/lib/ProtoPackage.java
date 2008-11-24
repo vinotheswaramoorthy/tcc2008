@@ -16,6 +16,12 @@ public class ProtoPackage {
 		  public String receiver;
 		  // the message content
 		  public String msg = "";
+		  
+		  private byte[] arrData;
+		  public byte[] getData(){
+			  if( arrData==null) return new byte[0];			  
+			  return arrData;
+		  }
 
 		  public ProtoPackage(){}
 		  public ProtoPackage(byte signal, byte command, String sender, String receiver, String msg)
@@ -62,6 +68,7 @@ public class ProtoPackage {
 				  if( msgLength>0 ){
 					 byte[] btMessage = new byte[msgLength];
 					 bb.read(btMessage, 0, msgLength);
+					 pkt.arrData = btMessage;
 					 pkt.msg = new String( btMessage );
 				  }			  
 			  }
