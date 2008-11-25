@@ -1,4 +1,4 @@
-package com.extend;
+package com.tcc2008.extend;
 
 public class Dictionary {
 	
