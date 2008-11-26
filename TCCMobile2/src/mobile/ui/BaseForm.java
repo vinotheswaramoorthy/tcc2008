@@ -34,6 +34,8 @@ public abstract class BaseForm {
         
         this._midlet = midlet;
         
+        formItem.addCommand(backCommand);
+        
         //Adiciona o botão de HELP para todos os formulários
         formItem.addCommand(new Command("Ajuda") {
             public void actionPerformed(ActionEvent evt) {
@@ -53,7 +55,7 @@ public abstract class BaseForm {
             }
         });
         
-        formItem.addCommand(backCommand);
+        
         formItem.setCommandListener(midlet);
         formItem.setBackCommand(backCommand);
         execute(formItem);

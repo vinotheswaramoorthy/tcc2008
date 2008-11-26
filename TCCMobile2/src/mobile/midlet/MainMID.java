@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.midlet.MIDlet;
@@ -55,6 +56,10 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     private Hashtable formsHash = new Hashtable();
     
 	private GeneralServer btServer;
+	
+	public Vector getDevices(){
+		return btServer.getEndPoints();
+	}
     
     private static Transition componentTransitions;
     private static Form mainMenu;

@@ -41,6 +41,9 @@ public class GeneralServer implements Runnable
   // list of active DevicePoints. all messages will be sent to all
   // active DevicePoints
   Vector endPoints = new Vector();
+  public Vector getEndPoints(){
+	  return endPoints;
+  }
 
   // list of pending DevicePoints. this is used to keep track of
   // discovered devices waiting for service discovery. When all the near-by
@@ -301,11 +304,28 @@ public class GeneralServer implements Runnable
           Util.Log("client connection end point already exist.. ignore this connection");
         } else
         {
+        	
           // - create a new DevicePoint object
           // - initialize the member variables
           // - start the data reader and sender threads.
           endpt = new DevicePoint( this, rdev, c);
 
+      	if( Util.enableLog ) //Estou debugando, então EMULA Ponte de comunicação
+    	{
+    		//Dispositivo rodando é o 000, então não posso visualizar o 002
+    		if( this.localName=="0000000DECAF")
+    		{
+    			if( endpt.remoteName == "0123456789AF" ) 
+    				continue;
+    		}
+    		//Se dispositivo rodando é o 002, então não posso visualizar o 000
+    		else if( this.localName=="0123456789AF"){
+    			if( endpt.remoteName == "0000000DECAF") 
+    				continue;
+    			
+    		}
+    	}
+          
           Thread t1 = new Thread( endpt.sender );
           t1.start();
 

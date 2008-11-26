@@ -17,6 +17,7 @@ import javax.microedition.rms.RecordStoreNotFoundException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
 import mobile.lib.Constants;
+import mobile.lib.DevicePoint;
 import mobile.ui.BaseForm;
 
 import com.sun.lwuit.Button;
@@ -46,6 +47,18 @@ public class FormProfile extends BaseForm implements ActionListener{
 	//objeto para listar os usuários encontrados
 	private List list;
 	
+	private Form currentForm;
+	
+
+	public void setProfile(Vector devicePoints){
+		Enumeration e =devicePoints.elements();
+		while(e.hasMoreElements()){
+			DevicePoint dp = (DevicePoint)e.nextElement();
+			usersTable.put(dp.remoteName, "");
+			profilesVector.addElement( dp.remoteName  );			
+		}		
+	}
+	
 	private Command cmdSearch = new Command("Pesquisar"){
 		public void actionPerformed(ActionEvent evt) {
 			//limpa a hashtable para receber a nova lista
@@ -53,8 +66,11 @@ public class FormProfile extends BaseForm implements ActionListener{
 			//limpa o vector que será passado para o list
 			profilesVector.removeAllElements();
 			//envia o frame requisitando os usuários disponíveis
-			getMidlet().send(Constants.APP_PROFILE, Constants.CMD_REQUESTUSERS, "Searching Users");
+			///getMidlet().send(Constants.APP_PROFILE, Constants.CMD_REQUESTUSERS, "Searching Users");
 			
+			setProfile(getMidlet().getDevices());
+			
+			loadList(currentForm);
 			super.actionPerformed(evt);
 		}
 	};
@@ -62,7 +78,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 	protected void execute(Form f) {
 		//configura o layout do form
 		f.setLayout(new BorderLayout());
-		
+		this.setProfile(this.getMidlet().getDevices());
 		usersTable.put("Ivan", "Ivan");
 				
 		loadList(f);
@@ -70,6 +86,8 @@ public class FormProfile extends BaseForm implements ActionListener{
 		f.addCommand(cmdSearch);			
 		
 		f.show();
+		
+		currentForm = f;
 	}
 
 	public void loadList(Form f){
