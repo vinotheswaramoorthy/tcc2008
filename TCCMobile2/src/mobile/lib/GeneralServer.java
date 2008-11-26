@@ -19,6 +19,8 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
+import com.sun.kvem.jsr082.impl.Utilites;
+
 public class GeneralServer implements Runnable
 {
   // major service class as SERVICE_TELEPHONY
@@ -202,6 +204,7 @@ public class GeneralServer implements Runnable
 
   public void sendPacket(ProtoPackage pp, String deviceName ){
 	    Util.Log("invoke sendString string="+pp.msg);
+	    boolean packSended = false;
 	    for ( int i=0; i < endPoints.size(); i++ )
 	    {	      
 	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
@@ -211,7 +214,18 @@ public class GeneralServer implements Runnable
 		      pp.receiver = endpt.remoteName;
 		      Util.Log("Sending packet from="+pp.sender+"; to="+pp.receiver);
 		      endpt.putPacket( pp );
+		      packSended = true;
 	      }
+	    }
+	    if( !packSended ) //Se o pack não foi enviado, tentar utilizar a PC
+	    {
+	    	ProtoPackage protoPC = 
+	    		new ProtoPackage(Constants.APP_GENERAL,
+	    				Constants.CMD_FINDROUTE,
+	    				localName,
+	    				deviceName,
+	    				"");
+	    	sendPacket(protoPC);
 	    }
 }
 
