@@ -17,6 +17,9 @@ public class Constants {
 	  public final static byte CMD_MESSAGE  		= 0x35;
 	  public final static byte CMD_INITIATED		= 0x36;
 	  public final static byte CMD_UPDATEINFO		= 0x3D;
+	  public final static byte CMD_FINDROUTE		= 0x3E;
+	  public final static byte CMD_FINDROUTE_ACK	= 0x3F;
+	  
 	  
 	  //Events
 	  public final static byte EVENT_JOIN			= 0x37;
