@@ -65,6 +65,9 @@ public class GeneralServer implements Runnable
   // timer to schedule task to do service discovery
   // see inquiryCompleted
   Timer timer = new Timer();
+  
+  //object to handle the packs using Communication Bridge (Ponte de Comunicação)
+  PackQueue commBridge = new PackQueue();
 
   public GeneralServer()
   {
@@ -94,6 +97,8 @@ public class GeneralServer implements Runnable
       Thread thread = new Thread( this );
       thread.start();
 
+      //Starting Communication Bridge (PC)
+      commBridge.init();
 
     }
     catch (BluetoothStateException e) {
@@ -112,6 +117,8 @@ public class GeneralServer implements Runnable
   {
     Util.Log("invoke disconnect()");
 
+    commBridge.stop();
+    
     // stop server socket, not longer accept client connection
     done = true;
     try {
@@ -197,21 +204,21 @@ public class GeneralServer implements Runnable
 	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
 	      // put the string on EndPoint, so sender will send the message
 	      pp.receiver = endpt.remoteName;
-	      Util.Log("Sending packet from="+pp.sender+"; to="+pp.receiver);
+	      Util.Log("Sending broadcast packet from="+pp.sender+"; to="+pp.receiver);
 	      endpt.putPacket( pp );
 	    }
   }
 
-  public void sendPacket(ProtoPackage pp, String deviceName ){
+  public void sendPacket(ProtoPackage pp, String deviceName ){	  	  	
 	    Util.Log("invoke sendString string="+pp.msg);
+	      // put the string on EndPoint, so sender will send the message
+	    pp.receiver = deviceName;
 	    boolean packSended = false;
 	    for ( int i=0; i < endPoints.size(); i++ )
 	    {	      
 	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
 	      
 	      if( endpt.remoteName.equals(deviceName) ){
-		      // put the string on EndPoint, so sender will send the message
-		      pp.receiver = endpt.remoteName;
 		      Util.Log("Sending packet from="+pp.sender+"; to="+pp.receiver);
 		      endpt.putPacket( pp );
 		      packSended = true;
@@ -226,6 +233,7 @@ public class GeneralServer implements Runnable
 	    				deviceName,
 	    				"");
 	    	sendPacket(protoPC);
+	    	commBridge.insertPack(pp);
 	    }
 }
 
