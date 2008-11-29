@@ -3,10 +3,12 @@ package com.tcc2008.services;
 import java.io.IOException;
 import java.util.Vector; 
 
+import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.RemoteDevice;
 
 import net.java.dev.marge.communication.CommunicationListener;
 import net.java.dev.marge.communication.ConnectionListener;
+import net.java.dev.marge.entity.Device;
 import net.java.dev.marge.entity.ServerDevice;
 import net.java.dev.marge.entity.config.ServerConfiguration;
 import net.java.dev.marge.factory.CommunicationFactory;
@@ -14,7 +16,7 @@ import net.java.dev.marge.factory.RFCOMMCommunicationFactory;
 
 
 public class BTRFCOMMService implements ConnectionListener, CommunicationListener {
-	
+	private Device device;
 	public Vector<byte[]> buffer;
 	
 	public BTRFCOMMService(){
@@ -36,19 +38,22 @@ public class BTRFCOMMService implements ConnectionListener, CommunicationListene
 	
 	
 	public void connectionEstablished(ServerDevice device, RemoteDevice remote) {
-//		try { 
-//			System.out.println(remote.getBluetoothAddress());
-//			Thread.sleep(1000);
 			device.startListening();
-//			device.setEnableBroadcast(true);
-//			device.send("Welcome".getBytes());
-//		} catch (InterruptedException ex) {
-//			System.err.println(ex);
-//			ex.printStackTrace();
-//		}
-
+			this.device = device;
+			
+			try {
+				System.out.println("Estabilizou conexão com: "+ remote.getFriendlyName(false));
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
+
+	public Device getDevice() {
+		return device;
+	}
 
 	public void errorOnConnection(IOException error) {
 		System.out.println(error);		
@@ -64,7 +69,7 @@ public class BTRFCOMMService implements ConnectionListener, CommunicationListene
 
 
 	public void receiveMessage(byte[] message) {		
-		buffer.add(message);
+		buffer.add(message);		
 	}
 
 }

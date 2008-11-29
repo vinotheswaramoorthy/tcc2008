@@ -1,5 +1,6 @@
 package com.tcc2008.services;
 
+import java.rmi.Naming;
 import java.util.Vector;
 
 import com.tcc2008.extend.Dictionary;
@@ -39,7 +40,7 @@ public class RedirectService implements Runnable {
 				continue;
 			}
 			
-			Protocol proto = queueRX.firstElement();
+			Protocol proto = queueRX.remove(0);
 			
 			// Se é uma resposta de UpdateLocation, manda para a fila de update
 			if(proto.getCommand()== Dictionary.CMD_UPDATELOCAL){
@@ -51,7 +52,7 @@ public class RedirectService implements Runnable {
 			else if(proto.getCommand()== Dictionary.CMD_SEND){
 				
 				// Verifica se o ID de Origem é válido
-				if(!MasterReference.checkUID(proto.getIDFrom()))
+				if(!MasterReference.checkUID(proto.getIDFrom().toString()))
 				{
 					Utility.Log("INVALID 'IDFROM': "+ proto.getIDFrom() );
 					// Posso colocar uma resposta de invalid ID
@@ -59,7 +60,7 @@ public class RedirectService implements Runnable {
 				}
 				else Utility.Log("VALIDATED 'IDFROM': "+ proto.getIDFrom() );
 				
-				String serverDest = MasterReference.getServerDestination(proto.getIDTo(), proto.getIDTo());  				
+				String serverDest = MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp());
 				
 				if(isThis(serverDest))
 				{
@@ -84,7 +85,7 @@ public class RedirectService implements Runnable {
 			
 			}			
 			
-			try { Thread.sleep(1000);}catch (Exception e) { Utility.Log(e.toString());}
+			try { Thread.sleep(1000);}catch (Exception e) { Utility.Log(e.getMessage());}
 		}
 		
 	}
@@ -97,7 +98,16 @@ public class RedirectService implements Runnable {
 		started = false;
 	}
 	
-	public boolean sendToServer(Protocol protocol, String idServe){
+	public boolean sendToServer(Protocol protocol, String server){
+		String remoteName = "rmi://" + server + "/REDIRECTSERVERSCOMM";
+		
+		try {
+			RMICOMMService commService =
+				( RMICOMMService ) Naming.lookup( remoteName);					
+			
+			return commService.enqueuePackage(protocol);
+			
+		} catch (Exception e) {	Utility.Log(e.getMessage()); }
 		
 		return false;
 	}

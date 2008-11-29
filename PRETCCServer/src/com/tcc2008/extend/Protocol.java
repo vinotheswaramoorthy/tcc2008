@@ -1,27 +1,35 @@
 package com.tcc2008.extend;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 
 
 public class Protocol implements Serializable {
-	private String IDFrom;
-	private String IDTo;
+	private UUID IDFrom;
+	private UUID IDTo;
 	private String IDApp;
 	private int command;
 	private boolean isPersisted;
 	private byte[] data;
+	private String address;
 	
-	public String getIDFrom() {
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public UUID getIDFrom() {
 		return IDFrom;
 	}
-	public void setIDFrom(String from) {
+	public void setIDFrom(UUID from) {
 		IDFrom = from;
 	}
-	public String getIDTo() {
+	public UUID getIDTo() {
 		return IDTo;
 	}
-	public void setIDTo(String to) {
+	public void setIDTo(UUID to) {
 		IDTo = to;
 	}
 	public int getCommand() {

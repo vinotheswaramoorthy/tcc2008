@@ -1,5 +1,6 @@
 package com.tcc2008.services;
 
+import java.util.UUID;
 import java.util.Vector;
 
 import com.tcc2008.extend.Dictionary;
@@ -47,8 +48,8 @@ public class PackageRXService implements Runnable{
 					/* TESTE DO BCC AQUI */
 					
 					
-					String idFrom 	= new String(Utility.wrap(data, index, 16));
-					String idTo 	= new String(Utility.wrap(data, index+=16, 16));
+					UUID idFrom 	= UUID.nameUUIDFromBytes(Utility.wrap(data, index, 16));
+					UUID idTo 		= UUID.nameUUIDFromBytes(Utility.wrap(data, index+=16, 16));
 					String idApp 	= new String(Utility.wrap(data, index+=16, 16));
 					boolean isPersisted = ((int) data[index+=16]) != 0 ;
 					byte cmd		= data[++index];
@@ -63,6 +64,7 @@ public class PackageRXService implements Runnable{
 					proto.setPersisted(isPersisted);
 					proto.setCommand(cmd);
 					proto.setData(Utility.wrap(data, index, nChar));
+					
 					
 					// 1 ETX  1 BCC  1 EOT
 					index += nChar + 3;

@@ -12,6 +12,8 @@ import com.tcc2008.services.*;
 
 public class Main {
 
+	private static String serverName = "Emerson";
+
 	public static void main(String[] args) 
 	{
 		/****************************************************************/
@@ -34,29 +36,32 @@ public class Main {
 		serviceRecptor.startServer();
 		
 		PackageRXService rxService = new PackageRXService(serviceRecptor.buffer , queueRX);
-		RedirectService redirectService = new RedirectService("EMERSON", queueRX, queueTX, queueUpdate, repository);
-		UpdateService updateService = new UpdateService(queueUpdate, queueTX);
-		RestoreService restoreService = new RestoreService(repository);
+		PackageTXService txService = new PackageTXService(queueTX, serviceRecptor);
+		RedirectService redirectService = new RedirectService(serverName, queueRX, queueTX, queueUpdate, repository);
+		UpdateService updateService = new UpdateService(serverName , queueUpdate, queueTX);
+		RestoreService restoreService = new RestoreService(repository, queueRX);
 		
 		
 		/******************************************************************/
 		/*  Iniciando o Serviço de comunicação RMI entre os servidores    */
 		/******************************************************************/
 
-		try {
-			ServerCOMM serviceCOMM = new ServerCOMM(queueRX);
-			String rmiObjectName = "rmi://localhost/REDIRECTSERVERSCOMM";
-			Naming.rebind(rmiObjectName, serviceCOMM);
-			
-			Utility.Log("THE RMI SERVICE OF SERVERS' COMMUNICATION INITIALIZED...  ");
-		} catch (RemoteException e) {
-			Utility.Log("CONNECTION FAILED:\n" +e.getMessage());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			Utility.Log("URL RMISERVER MALFORMED: " + e.getMessage());
-		} 		 
-		
+//		try {
+//			ServerCOMM serviceCOMM = new ServerCOMM(queueRX);
+//			String rmiObjectName = "rmi://localhost/REDIRECTSERVERSCOMM";
+//			Naming.rebind(rmiObjectName, serviceCOMM);
+//			
+//			Utility.Log("THE RMI SERVICE OF SERVERS' COMMUNICATION INITIALIZED...  ");
+//		} catch (RemoteException e) {
+//			Utility.Log("CONNECTION FAILED:\n" +e.getMessage());
+//		} catch (MalformedURLException e) {
+//			// TODO Auto-generated catch block
+//			Utility.Log("URL RMISERVER MALFORMED: " + e.getMessage());
+//		} 		 
+//		
 		/******************************************************************/
+		
+		
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.tcc2008.webservice;
-
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 import com.tcc2008.extend.Utility;
 
@@ -8,13 +7,23 @@ import com.tcc2008.extend.Utility;
 public class MasterReference {
 	
 	public static boolean checkUID(String idFrom){
+		Utility.Log(idFrom);
+		String response = soapRequest(	"IsValidUser", 
+				new String[] {"uid"} , 
+				new String[] {idFrom} );
 		
-		return false;
+		
+	  	return Boolean.parseBoolean(response);
 	}	
 	
 	public static String getServerDestination(String idFrom, String idApplication){
+		String response = soapRequest(	"GetDeviceLocationServer", 
+				new String[] {"uid","application"} , 
+				new String[] {idFrom, idApplication} );
+
+		if(response.equalsIgnoreCase("ErrorUnknow")) return "";
 		
-		return "";
+		return response;
 	}
 	
 	public static String getUID(String user, String password){
@@ -27,23 +36,28 @@ public class MasterReference {
 		
 		// TODO: precisa terminar
 		
-		return "";
+		return response;
 	}
 	
 	public static boolean updateLocation(String idFrom, String idApplication, String idServer){
-		String response = soapRequest(	"LoginUser", 
-				new String[] {"idFrom", "idApplication", "idServer"} , 
+		String response = soapRequest(	"IncludeDevice", 
+				new String[] {"uid", "application", "serverID"} , 
 				new String[] {idFrom, idApplication, idServer} );
-
 		
-		
-		return false;
+		return Boolean.parseBoolean(response);
 	}
 	
-	public static String[] verifyIsAccessible(String[] listIdTo){
-		
-		return new String[0];
-	}
+//	public static String[] verifyIsAccessible(String[] listIdTo, String[] listIdApp){
+//		ArrayList<String> list = new ArrayList<String>();
+//		for(int i=0;i<listIdTo.length;i++)
+//		{
+//			if(getServerDestination(listIdTo[i], listIdApp[i]) != "") list.add(e)
+//		}
+//		
+//		return new String[0];
+//	}
+	
+	
 	
 	private static String soapRequest(String methodName, String[] paramName, String[] paramValue ){
 		if (paramName.length != paramValue.length) return "[ERROR PARAM]";

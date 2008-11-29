@@ -2,8 +2,13 @@ package com.tcc2008.services;
 
 
 import java.rmi.Naming;
+import java.util.UUID;
+
+import net.java.dev.marge.factory.CommunicationFactory;
+import net.java.dev.marge.factory.RFCOMMCommunicationFactory;
 
 import com.tcc2008.extend.Protocol;
+import com.tcc2008.webservice.MasterReference;
 
 public class ClientCOMM {
 
@@ -31,8 +36,6 @@ public class ClientCOMM {
 	
 	public static void main(String[] args) {
 		ClientCOMM client = new ClientCOMM();
-		
-		
 	}
 
 }
