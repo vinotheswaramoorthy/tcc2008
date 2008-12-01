@@ -18,6 +18,7 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
+import mobile.lib.ProtoPackage;
 import mobile.ui.BaseForm;
 
 import com.sun.lwuit.Button;
@@ -88,6 +89,8 @@ public class FormProfile extends BaseForm implements ActionListener{
 		f.show();
 		
 		currentForm = f;
+		
+		getMidlet().sendSingle("0123456789AF", Constants.APP_PROFILE, Constants.CMD_RETURNUSER, "Ivan|bla bla bla");
 	}
 
 	public void loadList(Form f){
@@ -144,7 +147,13 @@ public class FormProfile extends BaseForm implements ActionListener{
 		return "Profile";
 	}
 	
-	public void handleAction(byte action, Object param1, Object param2) {
+	public void handleAction(byte event, Object param1, Object param2) {
+		DevicePoint endpt = (DevicePoint) param1;
+		ProtoPackage pkt = (ProtoPackage) param2;
+		if( pkt.command == Constants.CMD_RETURNUSER ){
+			usersTable.put("RECEBIDO!", "");
+			loadList(currentForm);
+		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 	}
 
 

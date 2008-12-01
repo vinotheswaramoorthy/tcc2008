@@ -320,6 +320,86 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 				Util.Log("Received UpdateInfo: "+pkt.msg);
 				endpt.setNickname(pkt.msg);
 			}
+			else if( pkt.command == Constants.CMD_FINDROUTE ){
+				Vector endPoints = btServer.getEndPoints();
+				if( pkt.getData().length<222 ) //222 é o limite, pois os dois últimos endereços (32B) serão do destinatário e desse pacote 
+				{
+					boolean founded = false;
+					//Recupera dispositivos próximos ao dispositivo local
+					Enumeration e = endPoints.elements();
+					while(e.hasMoreElements()){
+						DevicePoint dp = (DevicePoint)e.nextElement();  // Próximo dispositivo
+						
+						//Identificacao do dispositivo procurado
+						String[] deviceList = Util.split(pkt.msg,"|");
+						String destName = "";
+						if( deviceList.length>0) destName = deviceList[0];
+						
+						if( dp.remoteName.equalsIgnoreCase(destName)){							
+							sendSingle(endpt.remoteName, 
+										Constants.APP_GENERAL, 
+										Constants.CMD_FINDROUTE_ACK,
+										pkt.msg
+									);
+							founded = true;
+						}
+					}
+					//Se o dispostivo não está na lista do dispositivo atual
+					//   envio um broadcast novamente procurando pelo dispositivo
+					if(!founded){
+						//Se eu já estiver na rota não DEVO continuar
+						//    --> Evita loops entre os pacotes
+						String[] deviceList = Util.split(pkt.msg,"|");
+						if( deviceList.length==2 ){
+							String[] routeList = Util.split(deviceList[1],";");
+							boolean alreadyInRoute = false;
+							for(int i=0;i<routeList.length;i++){
+								if( btServer.localName.equalsIgnoreCase(routeList[i]) )
+									alreadyInRoute = true;
+							}
+							//Chequei que não estou na rota, então continuo
+							if( !alreadyInRoute){
+								send(Constants.APP_GENERAL,
+										Constants.CMD_FINDROUTE,
+										pkt.msg + ";" +btServer.localName);
+							}
+						}
+					}
+				}
+			}
+			else if (pkt.command == Constants.CMD_FINDROUTE_ACK){
+				if( pkt.msg!="" ){
+					
+					//Divide os dados em 2 (_oprocurado__|____rota_______)
+					String[] msgData = Util.split(pkt.msg, "|");
+					if( msgData.length>=2) //Deve ter alguma rota, senão está incorreto
+					{
+						//No 1 argumento tem o dispositivo que está sendo procurado
+						String foundDevice = msgData[0];
+						//No 2 argumento tem uma lista dos dispositivos em rota
+						String[] deviceRoute = Util.split(msgData[1], ";");
+						
+						if(deviceRoute.length==1){
+							//Estou na ultima rota, so a adiciona
+							btServer.insertRoute(foundDevice, endpt);													
+						}
+						else if( deviceRoute.length>1){
+							//Adiciona a rota para o dispositivo procurado
+							btServer.insertRoute(foundDevice, endpt);
+
+							//Penultimo dispositivo deve receber a rota também
+							String lastDevice = deviceRoute[deviceRoute.length-2];
+
+							//Monta o pacote de devolução tirando o último dispositivo (atual)
+							String newData = "";
+							for(int i=0;i<deviceRoute.length-1;i++){
+								newData = deviceRoute[i] + ";";
+							}
+							sendSingle(lastDevice,Constants.APP_GENERAL, Constants.CMD_FINDROUTE_ACK, newData);
+						}
+					}									
+				}
+			}
 			
 		}
 		else if( pkt.application == Constants.APP_CHAT && currentForm!=null && currentForm.getClass().getName().endsWith("FormChat")){
@@ -328,9 +408,9 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 			currentForm.handleAction(action, param1, param2);
 			
 		}
-		else if( pkt.application == Constants.APP_PROFILE ){
-			
-			
+		else if( pkt.application == Constants.APP_PROFILE && currentForm!=null && currentForm.getClass().getName().endsWith("FormProfile")){
+			Util.Log("Pkt will be handle a PROFILE action "+ currentForm.getClass().getName());
+			currentForm.handleAction(action, param1, param2);			
 		}
 		else if( pkt.application == Constants.APP_FILETRANSFER ){
 			FormFileTransfer formFileTransfer = (FormFileTransfer)formApps[1];

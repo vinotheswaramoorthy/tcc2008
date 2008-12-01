@@ -68,6 +68,10 @@ public class GeneralServer implements Runnable
   
   //object to handle the packs using Communication Bridge (Ponte de Comunicação)
   PackQueue commBridge = new PackQueue();
+  
+  public void insertRoute(String deviceName, DevicePoint endPoint){
+	  commBridge.putRoute(deviceName, endPoint);
+  }
 
   public GeneralServer()
   {
@@ -226,12 +230,13 @@ public class GeneralServer implements Runnable
 	    }
 	    if( !packSended ) //Se o pack não foi enviado, tentar utilizar a PC
 	    {
+	    	Util.Log("Pacote naum enviado, inicializando PC");
 	    	ProtoPackage protoPC = 
 	    		new ProtoPackage(Constants.APP_GENERAL,
 	    				Constants.CMD_FINDROUTE,
 	    				localName,
-	    				deviceName,
-	    				"");
+	    				"",
+	    				deviceName + "|" + localName);
 	    	sendPacket(protoPC);
 	    	commBridge.insertPack(pp);
 	    }
@@ -526,31 +531,47 @@ public class GeneralServer implements Runnable
         DevicePoint endpt = (DevicePoint) serviceRecordToEndPoint.get( rec );
         if ( endpt != null )
         {
-          endpt.con = con;
+        	endpt.con = con;
 
+        	boolean ignoreDevice = false;
+        	if( Util.enableLog ) //Estou debugando, então EMULA Ponte de comunicação
+        	{
+        		//Dispositivo rodando é o 000, então não posso visualizar o 002
+        		if( localName=="0000000DECAF")
+        		{
+        			if( endpt.remoteName == "0123456789AF" ) 
+        				ignoreDevice=true;
+        		}
+        		//Se dispositivo rodando é o 002, então não posso visualizar o 000
+        		else if( localName=="0123456789AF"){
+        			if( endpt.remoteName == "0000000DECAF") 
+        				ignoreDevice=true;
 
-          Thread t1 = new Thread( endpt.sender );
-          t1.start();
+        		}
+        	}
+        	if(!ignoreDevice){
+        		Thread t1 = new Thread( endpt.sender );
+        		t1.start();
 
-          Thread t2 = new Thread( endpt.reader );
-          t2.start();
+        		Thread t2 = new Thread( endpt.reader );
+        		t2.start();
 
-          endPoints.addElement( endpt );
+        		endPoints.addElement( endpt );
 
-          Util.Log("a new active EndPoint is established. name=" + endpt.remoteName);
+        		Util.Log("a new active EndPoint is established. name=" + endpt.remoteName);
 
-          // once a EndPoint established, the BlueChat client is responsible to initiate the
-          // handshake protocol.
-          ProtoPackage pkt = new ProtoPackage(
-        		  Constants.APP_GENERAL,
-        		  Constants.CMD_HANDSHAKE,
-        		  localName,
-        		  endpt.remoteName,
-        		  MobConfig.getNickname());
-        		  
-          endpt.putPacket(pkt);
-          //endpt.putPacket( new ProtoPackage(GeneralServer.SIGNAL_HANDSHAKE, localName) );
+        		// once a EndPoint established, the BlueChat client is responsible to initiate the
+        		// handshake protocol.
+        		ProtoPackage pkt = new ProtoPackage(
+        				Constants.APP_GENERAL,
+        				Constants.CMD_HANDSHAKE,
+        				localName,
+        				endpt.remoteName,
+        				MobConfig.getNickname());
 
+        		endpt.putPacket(pkt);
+        		//endpt.putPacket( new ProtoPackage(GeneralServer.SIGNAL_HANDSHAKE, localName) );
+        	}
 
         } else
         {

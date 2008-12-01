@@ -35,7 +35,8 @@ public class DevicePoint
 	  return nickname;
   }
   public void setNickname(String nick){
-	  nickname = nick;
+	  //se estiver vazio vai manter o BTAddress
+	  if( nick!="") nickname = nick;
   }
 
   // BTListener implementation for callback GeneralServer event
