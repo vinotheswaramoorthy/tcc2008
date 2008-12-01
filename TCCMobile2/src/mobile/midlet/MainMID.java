@@ -320,6 +320,24 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 				Util.Log("Received UpdateInfo: "+pkt.msg);
 				endpt.setNickname(pkt.msg);
 			}
+			else if( pkt.command==Constants.CMD_REQUESTUSERS){
+				
+				if( pkt.msg!="" ){
+					String senderName = pkt.msg;
+					Vector endPoints = btServer.getEndPoints();
+					Enumeration e = endPoints.elements();
+					while(e.hasMoreElements()){
+
+						DevicePoint dp = (DevicePoint)e.nextElement();  // Próximo dispositivo
+
+						//Envia para quem solicitou o dispositivo
+						// necessari enviar 1 a 1, pois pode ter muitas e pode usar PC
+						sendSingle(senderName, Constants.APP_PROFILE, Constants.CMD_RETURNUSER,
+								dp.remoteName + "|" + dp.getNickname());
+					}
+				}
+				
+			}
 			else if( pkt.command == Constants.CMD_FINDROUTE ){
 				Vector endPoints = btServer.getEndPoints();
 				if( pkt.getData().length<222 ) //222 é o limite, pois os dois últimos endereços (32B) serão do destinatário e desse pacote 

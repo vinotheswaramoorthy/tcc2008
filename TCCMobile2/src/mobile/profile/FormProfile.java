@@ -19,6 +19,7 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 import mobile.lib.Constants;
 import mobile.lib.DevicePoint;
 import mobile.lib.ProtoPackage;
+import mobile.lib.Util;
 import mobile.ui.BaseForm;
 
 import com.sun.lwuit.Button;
@@ -55,8 +56,8 @@ public class FormProfile extends BaseForm implements ActionListener{
 		Enumeration e =devicePoints.elements();
 		while(e.hasMoreElements()){
 			DevicePoint dp = (DevicePoint)e.nextElement();
-			usersTable.put(dp.remoteName, "");
-			profilesVector.addElement( dp.remoteName  );			
+			usersTable.put(dp.remoteName, dp.getNickname() );
+			profilesVector.addElement(  dp.getNickname()  );			
 		}		
 	}
 	
@@ -66,8 +67,9 @@ public class FormProfile extends BaseForm implements ActionListener{
 			usersTable.clear();
 			//limpa o vector que será passado para o list
 			profilesVector.removeAllElements();
-			//envia o frame requisitando os usuários disponíveis
-			///getMidlet().send(Constants.APP_PROFILE, Constants.CMD_REQUESTUSERS, "Searching Users");
+
+			//envia o frame requisitando os usuários disponíveis			
+			getMidlet().send(Constants.APP_GENERAL, Constants.CMD_REQUESTUSERS, getMidlet().getMyDeviceName());
 			
 			setProfile(getMidlet().getDevices());
 			
@@ -80,7 +82,6 @@ public class FormProfile extends BaseForm implements ActionListener{
 		//configura o layout do form
 		f.setLayout(new BorderLayout());
 		this.setProfile(this.getMidlet().getDevices());
-		usersTable.put("Ivan", "Ivan");
 				
 		loadList(f);
 		
@@ -90,7 +91,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 		
 		currentForm = f;
 		
-		getMidlet().sendSingle("0123456789AF", Constants.APP_PROFILE, Constants.CMD_RETURNUSER, "Ivan|bla bla bla");
+		//getMidlet().sendSingle("0123456789AF", Constants.APP_PROFILE, Constants.CMD_RETURNUSER, "Ivan|bla bla bla");
 	}
 
 	public void loadList(Form f){
@@ -103,7 +104,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 		profilesVector.removeAllElements();
 		
 		//carrega os usuário da tabela
-		Enumeration e = usersTable.keys();
+		Enumeration e = usersTable.elements();
 		//carrega os keys no vector
 		while(e.hasMoreElements()){
 			//adiciona a chave encontrada ao vector
@@ -115,7 +116,7 @@ public class FormProfile extends BaseForm implements ActionListener{
         //configura para não mostrar a borda
         list.setBorderPainted(false);
         //altera o tipo de navegação
-        list.setFixedSelection(List.FIXED_NONE_CYCLIC);
+        list.setFixedSelection(List.FIXED_CENTER);
         //permite o scroll
         list.setSmoothScrolling(true);
         //configura o fundo do list como transparente
@@ -151,18 +152,27 @@ public class FormProfile extends BaseForm implements ActionListener{
 		DevicePoint endpt = (DevicePoint) param1;
 		ProtoPackage pkt = (ProtoPackage) param2;
 		if( pkt.command == Constants.CMD_RETURNUSER ){
-			usersTable.put("RECEBIDO!", "");
-			loadList(currentForm);
+			Util.Log("Foi recebido um usuário: "+pkt.msg);
+			String[] usrData = Util.split(pkt.msg, "|");
+			if( usrData.length==2 ){
+				if( !usersTable.containsKey(usrData[0]) ){
+					usersTable.put(usrData[0], usrData[1]);
+					loadList(currentForm);
+				}
+			}
 		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 	}
 
 
-	public void actionPerformed(ActionEvent evt) {
-
+	public void actionPerformed(ActionEvent evt) {		
 		//verifica se o evento vem do comando de voltar
-		if(cmdSearch == evt.getSource()){
+		if(evt.getSource() == list){
+			Util.Log("PROF EVENTO: "+list.getSelectedItem().toString());
 			
-			
+//			if( usersTable.contains(list.getSelectedIndex()) )
+//			{
+//				usersTable.
+//			}
 			
 		}
 		
