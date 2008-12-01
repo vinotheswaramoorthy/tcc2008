@@ -37,7 +37,7 @@ public class UpdateService implements Runnable{
 				else Utility.Log("FAILED LOCATION UPDATE :\t"+proto.getIDFrom()+" / "+ proto.getIDApp()+" IN "+serverName  );
 			}
 			
-			sendBroadcast();
+			//sendBroadcast();
 			
 			try {Thread.sleep(420000);} catch (InterruptedException e) { Utility.Log(e.getMessage()); }
 		}

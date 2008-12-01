@@ -5,17 +5,27 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import com.tcc2008.extend.*;
-import com.tcc2008.services.*;
+import com.tcc2008.extend.Protocol;
+import com.tcc2008.extend.Utility;
+import com.tcc2008.services.BTRFCOMMService;
+import com.tcc2008.services.PackageRXService;
+import com.tcc2008.services.PackageTXService;
+import com.tcc2008.services.RedirectService;
+import com.tcc2008.services.RestoreService;
+import com.tcc2008.services.ServerCOMM;
+import com.tcc2008.services.UpdateService;
 
 
 
 public class Main {
 
-	private static String serverName = "Emerson";
+	
 
 	public static void main(String[] args) 
 	{
+		
+		final String serverName = args[0];
+		
 		/****************************************************************/
 		
 		// Fila de Pacotes recebidos, esperando para ser redirecionado
@@ -46,22 +56,22 @@ public class Main {
 		/*  Iniciando o Serviço de comunicação RMI entre os servidores    */
 		/******************************************************************/
 
-//		try {
-//			ServerCOMM serviceCOMM = new ServerCOMM(queueRX);
-//			String rmiObjectName = "rmi://localhost/REDIRECTSERVERSCOMM";
-//			Naming.rebind(rmiObjectName, serviceCOMM);
-//			
-//			Utility.Log("THE RMI SERVICE OF SERVERS' COMMUNICATION INITIALIZED...  ");
-//		} catch (RemoteException e) {
-//			Utility.Log("CONNECTION FAILED:\n" +e.getMessage());
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			Utility.Log("URL RMISERVER MALFORMED: " + e.getMessage());
-//		} 		 
-//		
+		try {
+			ServerCOMM serviceCOMM = new ServerCOMM(queueRX);
+			String rmiObjectName = "rmi://localhost/REDIRECTSERVERSCOMM";
+			Naming.rebind(rmiObjectName, serviceCOMM);
+			
+			Utility.Log("THE RMI SERVICE OF SERVERS' COMMUNICATION INITIALIZED...  ");
+		} catch (RemoteException e) {
+			Utility.Log("CONNECTION FAILED:\n" +e.getMessage());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			Utility.Log("URL RMISERVER MALFORMED: " + e.getMessage());
+		} 		 
+		
 		/******************************************************************/
 		
 		
+		
 	}
-
 }

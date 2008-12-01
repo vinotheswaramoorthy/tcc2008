@@ -16,10 +16,12 @@ public class TestMain {
 	
 	public static void main(String[] args) {
 
-	RemoteDeviceDiscovery discovery = new RemoteDeviceDiscovery(new Object());
+//	RemoteDeviceDiscovery discovery = new RemoteDeviceDiscovery(new Object());
 	
-	
-	
+		javax.bluetooth.UUID u = new javax.bluetooth.UUID(4856657);
+		System.out.println((char) Byte.decode("#5f").byteValue());
+		
+		
 	}
 
 }

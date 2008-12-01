@@ -1,5 +1,8 @@
 package com.tcc2008.extend;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class Utility 
 {			
 	public static byte[] wrap(byte[] array, int offset, int length){

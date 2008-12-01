@@ -91,7 +91,7 @@ public class RedirectService implements Runnable {
 	}
 	
 	private boolean isThis(String serverName) {
-		return this.serverName == serverName;
+		return this.serverName.equalsIgnoreCase(serverName);
 	}
 
 	public void stop(){
