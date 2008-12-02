@@ -15,7 +15,8 @@ public class ProtoPackage {
 		  // indicate the nick name of the destination
 		  public String receiver;
 		  // the message content
-		  public String getMsg(){		
+		  public String getMsg(){
+			  if(arrData==null) return "";
 			  return new String(arrData);
 		  }
 		  
