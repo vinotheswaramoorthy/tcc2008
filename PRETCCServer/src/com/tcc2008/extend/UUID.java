@@ -1,8 +1,10 @@
 package com.tcc2008.extend;
 
+import java.io.Serializable;
 
 
-public final class UUID implements Cloneable, Comparable 
+
+public final class UUID implements Cloneable, Comparable, Serializable
 {
 	private final byte []		uidValue	= new byte[ 16 ];
 
