@@ -1,7 +1,11 @@
 package com.tcc2008.application;
 
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
+
 import javax.bluetooth.BluetoothStateException;
 
+import com.tcc2008.extend.Utility;
 import com.tcc2008.services.*;
 
 import net.java.dev.marge.entity.config.ClientConfiguration;
@@ -18,10 +22,14 @@ public class TestMain {
 
 //	RemoteDeviceDiscovery discovery = new RemoteDeviceDiscovery(new Object());
 	
-		javax.bluetooth.UUID u = new javax.bluetooth.UUID(4856657);
-		System.out.println((char) Byte.decode("#5f").byteValue());
+		//UUID u = UUID.fromString("a258aa44-e943-3a1c-8427-e93bf9d695e7");
+		com.tcc2008.extend.UUID u = new com.tcc2008.extend.UUID("00000000000000000000000000000000");
+		com.tcc2008.extend.UUID f = new com.tcc2008.extend.UUID(Utility.hexToBytes("a258aa44e9433a1c8427e93bf9d695e7"));
 		
 		
+		System.out.println(u);
+		System.out.println(f);
 	}
-
+	
+	
 }

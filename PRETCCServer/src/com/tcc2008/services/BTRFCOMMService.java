@@ -3,8 +3,9 @@ package com.tcc2008.services;
 import java.io.IOException;
 import java.util.Vector; 
 
-import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.BluetoothStateException; 
 import javax.bluetooth.RemoteDevice;
+import javax.bluetooth.UUID;
 
 import net.java.dev.marge.communication.CommunicationListener;
 import net.java.dev.marge.communication.ConnectionListener;
@@ -27,6 +28,7 @@ public class BTRFCOMMService implements ConnectionListener, CommunicationListene
 		CommunicationFactory factory = new RFCOMMCommunicationFactory();
 		ServerConfiguration config = new ServerConfiguration(this);
 		config.setMaxNumberOfConnections(5);
+		//config.setUuid(new UUID("69696969696969696969696969696969",false));
 		factory.waitClients(config, this);	
 	}
 	

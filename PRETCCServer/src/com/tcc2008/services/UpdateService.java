@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.tcc2008.extend.Dictionary;
 import com.tcc2008.extend.Protocol;
+import com.tcc2008.extend.UUID;
 import com.tcc2008.extend.Utility;
 import com.tcc2008.webservice.MasterReference;
 
@@ -30,9 +31,13 @@ public class UpdateService implements Runnable{
 		
 			while(queueUpdate.size() > 0){
 				Protocol proto = queueUpdate.remove(0);
-				if(MasterReference.updateLocation(proto.getIDFrom().toString(), proto.getIDApp(), serverName))
+				if(!proto.getIDFrom().equals("00000000-0000-0000-0000-000000000000"))
 				{
-					Utility.Log("LOCATION UPDATE:\t"+proto.getIDFrom()+"["+ new String(proto.getData())+"] TO "+ proto.getIDApp()+" IN "+serverName  );
+					if(MasterReference.updateLocation(proto.getIDFrom().toString(), proto.getIDApp(), serverName))
+					{
+						Utility.Log("LOCATION UPDATE:\t"+proto.getIDFrom()+"["+ new String(proto.getData())+"] TO "+ proto.getIDApp()+" IN "+serverName  );
+					}
+					else Utility.Log("FAILED LOCATION UPDATE :\t"+proto.getIDFrom()+" / "+ proto.getIDApp()+" IN "+serverName  );
 				}
 				else Utility.Log("FAILED LOCATION UPDATE :\t"+proto.getIDFrom()+" / "+ proto.getIDApp()+" IN "+serverName  );
 			}

@@ -10,4 +10,4 @@ public interface RMICOMMService extends Remote {
 	 
 	public boolean enqueuePackage(Protocol proto )  throws RemoteException;
 			
-}
+} 

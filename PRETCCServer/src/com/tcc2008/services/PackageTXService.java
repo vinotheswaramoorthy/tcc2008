@@ -1,5 +1,6 @@
 package com.tcc2008.services;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -37,16 +38,13 @@ public class PackageTXService implements Runnable{
 					pkg[0] = (byte) Dictionary.SOH;
 					pkg[1] = (byte) Dictionary.STX;
 					
-					byte[] idFrom = new byte[16];
-					proto.getIDFrom()					;
-					
-					
+					byte[] idFrom = proto.getIDFrom().getBytes();			
 					for(int i=0;i<16;i++)
 					{
 						pkg[i+2] = idFrom[i];
 					}
 					
-					byte[] idTo = proto.getIDTo().toString().getBytes();
+					byte[] idTo = proto.getIDTo().getBytes();
 					for(int i=0;i<16;i++)
 					{
 						pkg[i+18] = idTo[i];
@@ -67,7 +65,7 @@ public class PackageTXService implements Runnable{
 					
 					for(int i=0;i<ndata;i++)
 			    	{
-			    		pkg[i+54] = (byte)proto.getData()[i];
+			    		pkg[i+54] = proto.getData()[i];
 			    	}
 			    	
 					pkg[ndata+54] = 0x03; 	//ETX
@@ -87,5 +85,7 @@ public class PackageTXService implements Runnable{
 	public void stop(){
 		started = false;
 	}
+	
+	
 
 }

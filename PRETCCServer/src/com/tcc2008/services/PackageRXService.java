@@ -1,10 +1,11 @@
 package com.tcc2008.services;
 
-import java.util.UUID;
+
 import java.util.Vector;
 
 import com.tcc2008.extend.Dictionary;
 import com.tcc2008.extend.Protocol;
+import com.tcc2008.extend.UUID;
 import com.tcc2008.extend.Utility;
 
 public class PackageRXService implements Runnable{
@@ -48,8 +49,8 @@ public class PackageRXService implements Runnable{
 					/* TESTE DO BCC AQUI */
 					
 					
-					UUID idFrom 	= UUID.nameUUIDFromBytes(Utility.wrap(data, index, 16));
-					UUID idTo 		= UUID.nameUUIDFromBytes(Utility.wrap(data, index+=16, 16));
+					UUID idFrom 	= new UUID(Utility.wrap(data, index, 16));
+					UUID idTo 		= new UUID(Utility.wrap(data, index+=16, 16));
 					String idApp 	= new String(Utility.wrap(data, index+=16, 16));
 					boolean isPersisted = ((int) data[index+=16]) != 0 ;
 					byte cmd		= data[++index];

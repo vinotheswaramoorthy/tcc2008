@@ -1,25 +1,24 @@
 package com.tcc2008.extend;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 
 
-public class Protocol implements Serializable {
+public class Protocol implements Serializable , Cloneable{ 
 	private UUID IDFrom;
 	private UUID IDTo;
 	private String IDApp;
-	private int command;
+	private int command = 0;
 	private boolean isPersisted;
 	private byte[] data;
-	private String address;
 	
-	public String getAddress() {
-		return address;
+	public Protocol() {
+		IDFrom = new UUID("00000000000000000000000000000000");
+		IDTo = new UUID("00000000000000000000000000000000");
+		isPersisted = false;
 	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	
+	
 	public UUID getIDFrom() {
 		return IDFrom;
 	}
@@ -57,7 +56,7 @@ public class Protocol implements Serializable {
 		this.data = data;
 	}
 	
-	public String toString(){
+	public String toString(){ 
 		String toView = "\n------------------------PACKAGE------------------------------"+
 						"\nFROM:\t"+IDFrom+
 						"\nTO:\t"+IDTo+
@@ -69,6 +68,4 @@ public class Protocol implements Serializable {
 						"\n-------------------------------------------------------------";
 		return toView;
 	}
-	
-
 }
