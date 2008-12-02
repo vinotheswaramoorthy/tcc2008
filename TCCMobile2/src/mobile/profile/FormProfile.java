@@ -69,7 +69,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 			profilesVector.removeAllElements();
 
 			//envia o frame requisitando os usuários disponíveis			
-			getMidlet().send(Constants.APP_GENERAL, Constants.CMD_REQUESTUSERS, getMidlet().getMyDeviceName());
+			getMidlet().send(Constants.APP_GENERAL, Constants.CMD_REQUESTUSERS, "0|"+ getMidlet().getMyDeviceName());
 			
 			setProfile(getMidlet().getDevices());
 			

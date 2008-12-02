@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Util {
  
-	public static boolean enableLog = true;
+	public static boolean enableLog = false;
 
 	public static void Log(String msg){
 

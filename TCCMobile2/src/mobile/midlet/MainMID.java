@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.microedition.io.file.FileSystemRegistry;
@@ -132,8 +134,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         
 		////////////////////////////////////////////////
 		btServer.init("", this);
-		
-		btServer.query();
+		InquireDevices();
 		////////////////////////////////////////////////
 		
         // application logic determins the number of columns based on the screen size
@@ -219,7 +220,23 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         frmSplash.finish(this, mainMenu);  
     }
 	
-	
+	public static final long TEMPO = ( 6000 * 50 ); //atualiza o site a cada 60 segundos   
+	  
+	   Timer timer = null;   
+	   
+	   public void InquireDevices() {   
+	      if( timer == null ) {   
+	         timer = new Timer();   
+	         TimerTask tarefa = new TimerTask() {   
+	            public void run() {   	
+	            	synchronized (btServer) {
+	            		btServer.query();
+					}	            	     	                 
+	            }   
+	         };   
+	         timer.scheduleAtFixedRate(tarefa, TEMPO, TEMPO);   
+	      }   
+	   }
 	
 	
     public static void setTransition(Transition in, Transition out) {
@@ -323,17 +340,28 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 			else if( pkt.command==Constants.CMD_REQUESTUSERS){
 				
 				if( pkt.getMsg()!="" ){
-					String senderName = pkt.getMsg();
+					int counter 	  = Integer.parseInt(Util.split(pkt.getMsg(),"|")[0]);
+					String senderName = Util.split(pkt.getMsg(),"|")[1];
 					Vector endPoints = btServer.getEndPoints();
 					Enumeration e = endPoints.elements();
 					while(e.hasMoreElements()){
-
 						DevicePoint dp = (DevicePoint)e.nextElement();  // Próximo dispositivo
+						
+						if( !dp.remoteName.equalsIgnoreCase(senderName)) {							
 
-						//Envia para quem solicitou o dispositivo
-						// necessari enviar 1 a 1, pois pode ter muitas e pode usar PC
-						sendSingle(senderName, Constants.APP_PROFILE, Constants.CMD_RETURNUSER,
-								dp.remoteName + "|" + dp.getNickname());
+							//Envia para quem solicitou o dispositivo
+							// necessari enviar 1 a 1, pois pode ter muitas e pode usar PC
+							sendSingle(senderName, Constants.APP_PROFILE, Constants.CMD_RETURNUSER,
+									dp.remoteName + "|" + dp.getNickname());
+							
+							if( counter<4 )
+							{						
+								//Incremento o contador: Evita loop infinito
+								pkt.setMsg( (counter+1) + "|"+senderName); 
+								//Solicito os pacotes aos filhos tbm
+								dp.putPacket(pkt);
+							}
+						}
 					}
 				}
 				

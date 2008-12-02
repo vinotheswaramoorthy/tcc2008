@@ -180,7 +180,7 @@ public class GeneralServer implements Runnable
     for ( int i=0; i < endPoints.size(); i++ )
     {
       DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
-      if ( endpt.remoteDev.equals( rdev ) )
+      if ( endpt.remoteName.equalsIgnoreCase( rdev.getBluetoothAddress() ) )
       {
         return endpt;
       }
@@ -257,7 +257,18 @@ public class GeneralServer implements Runnable
 
     // remove this end point from the active end point list
     endPoints.removeElement( endpt );
-
+  }
+  
+  public void insertRemoteEndPoint(DevicePoint endpt){
+	  
+	  for (int i = 0; i < endPoints.size(); i++){
+		  DevicePoint dp = (DevicePoint)endPoints.elementAt(i);
+		  if( endpt.remoteName.equalsIgnoreCase(dp.remoteName)){
+			  cleanupRemoteEndPoint(dp);
+		  }
+	  }
+	  endPoints.addElement(endpt);
+	  
   }
 
   /**
@@ -273,7 +284,7 @@ public class GeneralServer implements Runnable
       // Serial Port Profile URL syntax and our specific UUID
       // and set the service name to BlueChatApp
       server =  (StreamConnectionNotifier)Connector.open(
-          "btspp://localhost:" + MIDService.BEEHIVE_UUID.toString() +";name=BlueChatApp");
+          "btspp://localhost:" + MIDService.BEEHIVE_UUID.toString() +";name=BeehiveApp");
 
       // Retrieve the service record template
       ServiceRecord rec = localDevice.getRecord( server );
@@ -326,43 +337,44 @@ public class GeneralServer implements Runnable
         DevicePoint endpt = findEndPointByRemoteDevice( rdev );
         if ( endpt != null )
         {
-          // this is a safe guard to assure that this client
-          // has not been connected before
-          Util.Log("client connection end point already exist.. ignore this connection");
+        	endpt.con = c;
+        	// this is a safe guard to assure that this client
+        	// has not been connected before
+        	Util.Log("client connection end point already exist.. ignore this connection");
         } else
         {
-        	
-          // - create a new DevicePoint object
-          // - initialize the member variables
-          // - start the data reader and sender threads.
-          endpt = new DevicePoint( this, rdev, c);
 
-      	if( Util.enableLog ) //Estou debugando, então EMULA Ponte de comunicação
-    	{
-    		//Dispositivo rodando é o 000, então não posso visualizar o 002
-    		if( this.localName=="0000000DECAF")
-    		{
-    			if( endpt.remoteName == "0123456789AF" ) 
-    				continue;
-    		}
-    		//Se dispositivo rodando é o 002, então não posso visualizar o 000
-    		else if( this.localName=="0123456789AF"){
-    			if( endpt.remoteName == "0000000DECAF") 
-    				continue;
-    			
-    		}
-    	}
-          
-          Thread t1 = new Thread( endpt.sender );
-          t1.start();
+        	// - create a new DevicePoint object
+        	// - initialize the member variables
+        	// - start the data reader and sender threads.
+        	endpt = new DevicePoint( this, rdev, c);
 
-          Thread t2 = new Thread( endpt.reader );
-          t2.start();
+        	if( Util.enableLog ) //Estou debugando, então EMULA Ponte de comunicação
+        	{
+        		//Dispositivo rodando é o 000, então não posso visualizar o 002
+        		if( this.localName=="0000000DECAF")
+        		{
+        			if( endpt.remoteName == "0123456789AF" ) 
+        				continue;
+        		}
+        		//Se dispositivo rodando é o 002, então não posso visualizar o 000
+        		else if( this.localName=="0123456789AF"){
+        			if( endpt.remoteName == "0000000DECAF") 
+        				continue;
 
-          // add this EndPoint to the active list
-          endPoints.addElement( endpt );
+        		}
+        	}
 
-          Util.Log("a new active EndPoint is established. name=" + endpt.remoteName);
+        	Thread t1 = new Thread( endpt.sender );
+        	t1.start();
+
+        	Thread t2 = new Thread( endpt.reader );
+        	t2.start();
+
+        	// add this EndPoint to the active list
+        	insertRemoteEndPoint( endpt );
+
+        	Util.Log("a new active EndPoint is established. name=" + endpt.remoteName);
 
         }
 
@@ -528,7 +540,9 @@ public class GeneralServer implements Runnable
         // to activate the EndPoint. this includes
         // - initialize connection
         // - start sender and reader thread
-        DevicePoint endpt = (DevicePoint) serviceRecordToEndPoint.get( rec );
+        DevicePoint auxEndpt = (DevicePoint) serviceRecordToEndPoint.get( rec );
+        DevicePoint endpt = findEndPointByRemoteDevice(auxEndpt.remoteDev);
+        if( endpt==null ) endpt=auxEndpt;
         if ( endpt != null )
         {
         	endpt.con = con;
@@ -556,7 +570,7 @@ public class GeneralServer implements Runnable
         		Thread t2 = new Thread( endpt.reader );
         		t2.start();
 
-        		endPoints.addElement( endpt );
+        		insertRemoteEndPoint( endpt );
 
         		Util.Log("a new active EndPoint is established. name=" + endpt.remoteName);
 
