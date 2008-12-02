@@ -16,6 +16,7 @@ public class Protocol implements Serializable , Cloneable{
 		IDFrom = new UUID("00000000000000000000000000000000");
 		IDTo = new UUID("00000000000000000000000000000000");
 		isPersisted = false;
+		data = "".getBytes();
 	}
 	
 	
@@ -49,7 +50,7 @@ public class Protocol implements Serializable , Cloneable{
 	public void setPersisted(boolean isPersisted) {
 		this.isPersisted = isPersisted;
 	}
-	public byte[] getData() {
+	public byte[] getData() { 
 		return data;
 	}
 	public void setData(byte[] data) {

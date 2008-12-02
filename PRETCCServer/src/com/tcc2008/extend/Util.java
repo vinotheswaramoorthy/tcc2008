@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
  * Includes a ready-to-use instance of a cryptographical 
  * random generator (<code>CrytoRandom</code>). 
  */
-public class Util
+class Util
 {
    
 	public static String bytesToHex( byte [] b, int offset, int length )
