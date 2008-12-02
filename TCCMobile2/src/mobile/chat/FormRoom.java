@@ -148,7 +148,7 @@ public class FormRoom extends Form implements ActionListener{
 			// a new user has join the chat room
 						
 			//Dados do pacote contém o nome da sala (poderiamos alterar para um ID)
-			if( pkt.msg.equals(cr.getName())){	
+			if( pkt.getMsg().equals(cr.getName())){	
 				if( !allDevices.contains(pkt.sender)){
 					String msg = endpt.getNickname() + " entrou na sala";
 					allDevices.addElement(pkt.sender);
@@ -165,9 +165,9 @@ public class FormRoom extends Form implements ActionListener{
 			
 			// a new message has received from a remote user
 
-			Util.Log("EVENT_RECEIVED: "+pkt.msg);
+			Util.Log("EVENT_RECEIVED: "+pkt.getMsg());
 			
-			String[] receivedPk = Util.split(pkt.msg,"|");
+			String[] receivedPk = Util.split(pkt.getMsg(),"|");
 			
 			if(receivedPk.length>0){				
 				if( receivedPk[0].equals(cr.getName())){
@@ -184,7 +184,7 @@ public class FormRoom extends Form implements ActionListener{
 		} else if (event == Constants.EVENT_LEAVE) {
 			// a user has leave the chat room
 			
-			if( pkt.msg.equals(cr.getName())){
+			if( pkt.getMsg().equals(cr.getName())){
 			
 				String msg = endpt.getNickname() + " sai da sala";
 				if( allDevices.contains(pkt.sender))

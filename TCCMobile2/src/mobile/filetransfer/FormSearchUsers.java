@@ -209,7 +209,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//verifica se é uma resposta do frame de busca de usuários
 		if(pkt.command == Constants.CMD_REQUESTUSERS){
 			//verifica se o sender está procurando usuários
-			if (pkt.msg.equals("Searching Users")){
+			if (pkt.getMsg().equals("Searching Users")){
 				//envia o nome do contato para o dispositivo que requisitou os usuários disponíveis
 				midlet.sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_RETURNUSER, MobConfig.getNickname());
 			}
@@ -218,9 +218,9 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//retorno dos usuários disponíveis
 		if(pkt.command == Constants.CMD_RETURNUSER){
 			//verifica se este usuário já está na lista
-			if(!usersTable.containsKey(pkt.msg))
+			if(!usersTable.containsKey(pkt.getMsg()))
 				//caso nao esteja, coloca ele na lista
-				usersTable.put(pkt.msg,pkt.sender);
+				usersTable.put(pkt.getMsg(),pkt.sender);
 			//atualiza a lista de usuários
 			loadList();
 		}
@@ -228,7 +228,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//requisição dos arquivos
 		if(pkt.command == Constants.CMD_REQUESTLIST){
 			//verifica se o frame está requisitando os arquivos disponibilizados
-			if(pkt.msg.equals("Request Files")){
+			if(pkt.getMsg().equals("Request Files")){
 				//chama o frame para montar e mandar a lista de arquivos
 				sendListFiles(pkt.sender);
 			}
@@ -237,7 +237,7 @@ public class FormSearchUsers extends Form implements ActionListener {
 		//retorno dos arquivos solicitados
 		if(pkt.command == Constants.CMD_RETURNLIST){
 			//utiliza o split para separar os nomes dos arquivos que estão no campo de mensagens
-			String received[] = Util.split(pkt.msg, "|");
+			String received[] = Util.split(pkt.getMsg(), "|");
 		
 			//carrega o nome do usuário que está sendo selecionado
 			String userName = list.getSelectedItem().toString();

@@ -152,8 +152,8 @@ public class FormProfile extends BaseForm implements ActionListener{
 		DevicePoint endpt = (DevicePoint) param1;
 		ProtoPackage pkt = (ProtoPackage) param2;
 		if( pkt.command == Constants.CMD_RETURNUSER ){
-			Util.Log("Foi recebido um usuário: "+pkt.msg);
-			String[] usrData = Util.split(pkt.msg, "|");
+			Util.Log("Foi recebido um usuário: "+pkt.getMsg());
+			String[] usrData = Util.split(pkt.getMsg(), "|");
 			if( usrData.length==2 ){
 				if( !usersTable.containsKey(usrData[0]) ){
 					usersTable.put(usrData[0], usrData[1]);

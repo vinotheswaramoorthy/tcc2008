@@ -157,11 +157,11 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 				}
 			}
 		} else if( pkt.command == Constants.EVENT_LISTCHAT_ACK){
-			if( pkt.msg.length()>0){
+			if( pkt.getMsg().length()>0){
 				
-				Util.Log("New chat found: "+pkt.msg);
+				Util.Log("New chat found: "+pkt.getMsg());
 				
-				String[] dataReceived = Util.split(pkt.msg, "|"); 
+				String[] dataReceived = Util.split(pkt.getMsg(), "|"); 
 				
 				if( dataReceived.length>1){
 					ChatRoom cr = new ChatRoom( pkt.sender,dataReceived[0],dataReceived[1]);

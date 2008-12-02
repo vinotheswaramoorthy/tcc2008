@@ -343,13 +343,13 @@ public class FormFileTransfer extends BaseForm{
 			//caso seja uma requisição de um arquivo especifico
 			case Constants.CMD_REQUESTFILE:
 				Util.Log("RequestFile received");
-				sendFile(pkt.sender, pkt.msg);
+				sendFile(pkt.sender, pkt.getMsg());
 			break;
 			
 			//case receba um frame de inicio de arquivo
 			case Constants.CMD_STARTSEND:
 				Util.Log("StartSend received");
-				String[] info = Util.split(pkt.msg, "|");
+				String[] info = Util.split(pkt.getMsg(), "|");
 				fileInfo = new FileInfo(info[0],Integer.parseInt(info[1]),Integer.parseInt(info[2]));
 				getMidlet().sendSingle(pkt.sender, Constants.APP_FILETRANSFER, Constants.CMD_TRANSFERING_ACK, "0");
 			break;
@@ -362,7 +362,7 @@ public class FormFileTransfer extends BaseForm{
 			//ou um frame de tranferencia de arquivo
 			case Constants.CMD_TRANSFERING:
 				Util.Log("Transfering command received");
-				byte[] 	block = pkt.msg.getBytes();
+				byte[] 	block = pkt.getData();
 				fileInfo.putBlock(block);
 				getMidlet().sendSingle(	pkt.sender, 
 										Constants.APP_FILETRANSFER, 

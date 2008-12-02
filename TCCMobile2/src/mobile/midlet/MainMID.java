@@ -317,13 +317,13 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 			//General must be handled HERE!	
 			
 			if( pkt.command == Constants.CMD_UPDATEINFO){
-				Util.Log("Received UpdateInfo: "+pkt.msg);
-				endpt.setNickname(pkt.msg);
+				Util.Log("Received UpdateInfo: "+pkt.getMsg());
+				endpt.setNickname(pkt.getMsg());
 			}
 			else if( pkt.command==Constants.CMD_REQUESTUSERS){
 				
-				if( pkt.msg!="" ){
-					String senderName = pkt.msg;
+				if( pkt.getMsg()!="" ){
+					String senderName = pkt.getMsg();
 					Vector endPoints = btServer.getEndPoints();
 					Enumeration e = endPoints.elements();
 					while(e.hasMoreElements()){
@@ -349,7 +349,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 						DevicePoint dp = (DevicePoint)e.nextElement();  // Próximo dispositivo
 						
 						//Identificacao do dispositivo procurado
-						String[] deviceList = Util.split(pkt.msg,"|");
+						String[] deviceList = Util.split(pkt.getMsg(),"|");
 						String destName = "";
 						if( deviceList.length>0) destName = deviceList[0];
 						
@@ -357,7 +357,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 							sendSingle(endpt.remoteName, 
 										Constants.APP_GENERAL, 
 										Constants.CMD_FINDROUTE_ACK,
-										pkt.msg
+										pkt.getMsg()
 									);
 							founded = true;
 						}
@@ -367,7 +367,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 					if(!founded){
 						//Se eu já estiver na rota não DEVO continuar
 						//    --> Evita loops entre os pacotes
-						String[] deviceList = Util.split(pkt.msg,"|");
+						String[] deviceList = Util.split(pkt.getMsg(),"|");
 						if( deviceList.length==2 ){
 							String[] routeList = Util.split(deviceList[1],";");
 							boolean alreadyInRoute = false;
@@ -379,17 +379,17 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 							if( !alreadyInRoute){
 								send(Constants.APP_GENERAL,
 										Constants.CMD_FINDROUTE,
-										pkt.msg + ";" +btServer.localName);
+										pkt.getMsg() + ";" +btServer.localName);
 							}
 						}
 					}
 				}
 			}
 			else if (pkt.command == Constants.CMD_FINDROUTE_ACK){
-				if( pkt.msg!="" ){
+				if( pkt.getMsg()!="" ){
 					
 					//Divide os dados em 2 (_oprocurado__|____rota_______)
-					String[] msgData = Util.split(pkt.msg, "|");
+					String[] msgData = Util.split(pkt.getMsg(), "|");
 					if( msgData.length>=2) //Deve ter alguma rota, senão está incorreto
 					{
 						//No 1 argumento tem o dispositivo que está sendo procurado
@@ -462,7 +462,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
 					msg
 				); 
 		
-		Util.Log("Testando o send single " + senderPkt.msg);
+		Util.Log("Testando o send single " + senderPkt.getMsg());
 		
 		btServer.sendPacket(senderPkt, deviceName);		
 	}

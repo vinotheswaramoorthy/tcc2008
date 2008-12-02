@@ -86,7 +86,7 @@ public class Room extends Form implements CommandListener {
 			DevicePoint endpt = (DevicePoint) param1;
 			ProtoPackage pkt = (ProtoPackage) param2;
 			// render this message on screen
-			messageBoard.AppendText(pkt.msg);
+			messageBoard.AppendText(pkt.getMsg());
 
 		} else if (event == Constants.EVENT_LEAVE) {
 			// a user has leave the chat room

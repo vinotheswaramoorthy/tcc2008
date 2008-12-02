@@ -202,7 +202,7 @@ public class GeneralServer implements Runnable
   }
   
   public void sendPacket(ProtoPackage pp){
-	    Util.Log("invoke sendString string="+pp.msg);
+	    Util.Log("invoke sendString string="+pp.getMsg());
 	    for ( int i=0; i < endPoints.size(); i++ )
 	    {	      
 	      DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
@@ -214,7 +214,7 @@ public class GeneralServer implements Runnable
   }
 
   public void sendPacket(ProtoPackage pp, String deviceName ){	  	  	
-	    Util.Log("invoke sendString string="+pp.msg);
+	    Util.Log("invoke sendString string="+pp.getMsg());
 	      // put the string on EndPoint, so sender will send the message
 	    pp.receiver = deviceName;
 	    boolean packSended = false;

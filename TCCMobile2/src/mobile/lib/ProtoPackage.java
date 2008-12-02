@@ -15,12 +15,22 @@ public class ProtoPackage {
 		  // indicate the nick name of the destination
 		  public String receiver;
 		  // the message content
-		  public String msg = "";
+		  public String getMsg(){		
+			  return new String(arrData);
+		  }
+		  
+		  public void setMsg(String msg){
+			  arrData = msg.getBytes();
+		  }
 		  
 		  private byte[] arrData;
 		  public byte[] getData(){
 			  if( arrData==null) return new byte[0];			  
 			  return arrData;
+		  }
+		  
+		  public void setData(byte[] arrBytes){
+			  arrData = arrBytes;
 		  }
 
 		  public ProtoPackage(){}
@@ -30,7 +40,7 @@ public class ProtoPackage {
 		    this.command	 	= command;
 		    this.sender 		= sender;
 		    this.receiver 		= receiver;
-		    this.msg 			= msg;
+		    this.arrData 		= msg.getBytes();
 		  }
 
 		  public static ProtoPackage getProtoPackage(byte[] arrBytes)
@@ -69,7 +79,6 @@ public class ProtoPackage {
 					 byte[] btMessage = new byte[msgLength];
 					 bb.read(btMessage, 0, msgLength);
 					 pkt.arrData = btMessage;
-					 pkt.msg = new String( btMessage );
 				  }			  
 			  }
 			  
@@ -98,9 +107,8 @@ public class ProtoPackage {
 			  byte[] btReceiver = receiver.getBytes();
 			  if( btReceiver.length>16 ) throw new Exception("Invalid byte receiver size");			
 			  
-			  // XXXX bytes to the Message 
-			  byte[] btMessage	= msg.getBytes();			  			  
-			  if( btMessage.length>255 ) throw new Exception("Invalid byte application size. Max Size 255");			  			 			  
+			  // XXXX bytes to the Message 			  			  
+			  if( getData().length>255 ) throw new Exception("Invalid byte application size. Max Size 255");			  			 			  
 
 			  //SOH			  
 			  dos.write( (byte)0x01);
@@ -121,9 +129,9 @@ public class ProtoPackage {
 			  dos.write(btReceiver);			  
 			  
 			  //NCHAR
-			  dos.write( (byte)btMessage.length);
+			  dos.write( (byte)getData().length);
 			  
-			  dos.write(btMessage);
+			  dos.write(getData());
 			  
 			  //ETX
 			  dos.write( (byte)0x03 );

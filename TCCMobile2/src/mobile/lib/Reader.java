@@ -50,7 +50,7 @@ public class Reader implements Runnable
 						if( pkt.command == Constants.CMD_HANDSHAKE){
 
 							endpt.remoteName = pkt.sender; 
-							endpt.setNickname(pkt.msg);
+							endpt.setNickname(pkt.getMsg());
 							Util.Log("read in HANDSHAKE from "+endpt.remoteName+ " in "+endpt.getNickname());
 
 							ProtoPackage answer = new ProtoPackage(
@@ -67,7 +67,7 @@ public class Reader implements Runnable
 						else if ( pkt.command == Constants.CMD_MESSAGE )
 						{
 
-							Util.Log("read in MESSAGE string '"+pkt.msg+"' from "+endpt.remoteName);
+							Util.Log("read in MESSAGE string '"+pkt.getMsg()+"' from "+endpt.remoteName);
 
 							// read in a string message. emit RECEIVED event to BTListener implementation
 							endpt.callback.handleAction( Constants.EVENT_RECEIVED, endpt, pkt );
@@ -98,10 +98,10 @@ public class Reader implements Runnable
 						} else if ( pkt.command == Constants.CMD_HANDSHAKE_ACK )
 						{
 
-							Util.Log("read in  HANDSHAKE_ACK from "+endpt.remoteName + " in " + pkt.msg);
+							Util.Log("read in  HANDSHAKE_ACK from "+endpt.remoteName + " in " + pkt.getMsg());
 							// update remote user nick name
 							endpt.remoteName = pkt.sender;
-							endpt.setNickname( pkt.msg );
+							endpt.setNickname( pkt.getMsg() );
 
 						} else if ( pkt.command == Constants.CMD_TERMINATE_ACK )
 						{
