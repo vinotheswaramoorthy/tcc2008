@@ -11,7 +11,7 @@ public class ClientCOMM {
 		super();
 		
 		//String remoteName = "rmi://" + server + "/COMMService";
-		String remoteName = "rmi://localhost/REDIRECTSERVERSCOMM";
+		String remoteName = "rmi://10.16.0.127/REDIRECTSERVERSCOMM";
 		
 		try {
 			RMICOMMService commService =

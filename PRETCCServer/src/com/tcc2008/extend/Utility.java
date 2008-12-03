@@ -49,7 +49,7 @@ public class Utility
 		proto.setCommand(Dictionary.CMD_SEND);
 		proto.setIDFrom(new UUID(idFrom));
 		proto.setIDTo(new UUID(idTo));
-		proto.setIDApp(idApplication);
+		proto.setIDApp(new UUID(idApplication));
 		proto.setPersisted(isPersisted);
 		proto.setData(data);
 
@@ -83,7 +83,7 @@ public class Utility
 		Protocol proto = new Protocol();
 		proto.setCommand(Dictionary.CMD_UPDATELOCAL);
 		proto.setIDFrom(new UUID(idFrom));
-		proto.setIDApp(idApplication);
+		proto.setIDApp(new UUID(idApplication));
 
 		return genPackage(proto);
 	}
@@ -171,7 +171,7 @@ public class Utility
 
 				UUID idFrom 	= new UUID(Utility.wrap(packges, index, 16));
 				UUID idTo 		= new UUID(Utility.wrap(packges, index+=16, 16));
-				String idApp 	= new String(Utility.wrap(packges, index+=16, 16));
+				UUID idApp 		= new UUID(Utility.wrap(packges, index+=16, 16));
 				boolean isPersisted = ((int) packges[index+=16]) != 0 ;
 				byte cmd		= packges[++index];
 

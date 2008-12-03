@@ -31,9 +31,9 @@ public class UpdateService implements Runnable{
 		
 			while(queueUpdate.size() > 0){
 				Protocol proto = queueUpdate.remove(0);
-				if(!proto.getIDFrom().equals("00000000-0000-0000-0000-000000000000"))
+				if(!proto.getIDFrom().toString().equals("00000000-0000-0000-0000-000000000000"))
 				{
-					if(MasterReference.updateLocation(proto.getIDFrom().toString(), proto.getIDApp(), serverName))
+					if(MasterReference.updateLocation(proto.getIDFrom().toString(), proto.getIDApp().toString(), serverName))
 					{
 						Utility.Log("LOCATION UPDATE:\t"+proto.getIDFrom()+"["+ new String(proto.getData())+"] TO "+ proto.getIDApp()+" IN "+serverName  );
 					}
@@ -44,7 +44,7 @@ public class UpdateService implements Runnable{
 			
 			//sendBroadcast();
 			
-			try {Thread.sleep(420000);} catch (InterruptedException e) { Utility.Log(e.getMessage()); }
+			try {Thread.sleep(60000);} catch (InterruptedException e) { Utility.Log(e.getMessage()); }
 		}
 		
 	}

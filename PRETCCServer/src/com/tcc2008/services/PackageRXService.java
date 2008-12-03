@@ -51,7 +51,7 @@ public class PackageRXService implements Runnable{
 					
 					UUID idFrom 	= new UUID(Utility.wrap(data, index, 16));
 					UUID idTo 		= new UUID(Utility.wrap(data, index+=16, 16));
-					String idApp 	= new String(Utility.wrap(data, index+=16, 16));
+					UUID idApp 		= new UUID(Utility.wrap(data, index+=16, 16));
 					boolean isPersisted = ((int) data[index+=16]) != 0 ;
 					byte cmd		= data[++index];
 					
@@ -72,7 +72,7 @@ public class PackageRXService implements Runnable{
 					if (data[index-1] == Dictionary.EOT) 
 						{
 							repositoryRX.add(proto);
-							Utility.Log("Add Repository: " + proto);
+							Utility.Log("SEND TO RX QUEUE: " + proto);
 						}
 				}
 				else index++;

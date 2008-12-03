@@ -5,9 +5,13 @@ import java.io.Serializable;
 
 
 public class Protocol implements Serializable , Cloneable{ 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4598030991116334913L;
 	private UUID IDFrom;
 	private UUID IDTo;
-	private String IDApp;
+	private UUID IDApp;
 	private int command = 0;
 	private boolean isPersisted;
 	private byte[] data;
@@ -15,6 +19,7 @@ public class Protocol implements Serializable , Cloneable{
 	public Protocol() {
 		IDFrom = new UUID("00000000000000000000000000000000");
 		IDTo = new UUID("00000000000000000000000000000000");
+		IDApp = new UUID("00000000000000000000000000000000");
 		isPersisted = false;
 		data = "".getBytes();
 	}
@@ -38,10 +43,10 @@ public class Protocol implements Serializable , Cloneable{
 	public void setCommand(int command) {
 		this.command = command;
 	}
-	public String getIDApp(){
+	public UUID getIDApp(){
 		return IDApp;
 	}
-	public void setIDApp(String app) {
+	public void setIDApp(UUID app) {
 		IDApp = app;
 	}
 	public boolean isPersisted() {

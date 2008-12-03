@@ -30,7 +30,7 @@ public class RestoreService implements Runnable {
 			while (repository.size() > 0) {
 			
 				Protocol proto = repository.remove(0);
-				if( MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp()) != "")
+				if( MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toString()) != "")
 					queueRX.add(proto);
 				else list.add(proto);
 			}

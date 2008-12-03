@@ -42,15 +42,15 @@ public class RedirectService implements Runnable {
 			}
 			
 			Protocol proto = queueRX.remove(0);
-			System.out.println(Dictionary.CMD_SEND);
+
 			// Se é uma resposta de UpdateLocation, manda para a fila de update
-			if(proto.getCommand()== Dictionary.CMD_UPDATELOCAL){
+			if(proto.getCommand()== (byte) Dictionary.CMD_UPDATELOCAL){
 				if(sendToUpdate(proto))
 					Utility.Log("SENT TO 'UPDATE QUEUE': " + proto.toString());
 				else Utility.Log("FAILED SEND TO 'UPDATE QUEUE': " + proto.toString());
 			}			
 			// Se é um pacote de solicitação de UID   
-			else if(proto.getCommand()== Dictionary.CMD_GETUUID){
+			else if(proto.getCommand()== (byte) Dictionary.CMD_GETUUID){
 				String userpass = new String(proto.getData());
 				String[] info = userpass.split(";");
 				String uid = MasterReference.getUID(info[0], info[1]).replace("-", "");
@@ -65,8 +65,8 @@ public class RedirectService implements Runnable {
 				else Utility.Log("FAILED SEND TO 'SEND QUEUE': " + proto.toString());
 				
 			}			
-			// Se é um pacote de envio   
-			else if(proto.getCommand()== Dictionary.CMD_SEND){
+			// Se é um pacote de envio    
+			else if(proto.getCommand()== (byte) Dictionary.CMD_SEND){
 				
 				// Verifica se o ID de Origem é válido
 				if(!MasterReference.checkUID(proto.getIDFrom().toString()))
@@ -77,7 +77,7 @@ public class RedirectService implements Runnable {
 				}
 				else Utility.Log("VALIDATED 'IDFROM': "+ proto.getIDFrom() );
 				
-				String serverDest = MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp());
+				String serverDest = MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toHexString());
 				
 				if(containsThis(serverDest))
 				{
