@@ -57,10 +57,12 @@ public class Sender implements Runnable {
 					stop();
 				}
 
+				Thread.yield();
 			} // while !done
 
 			// close the output stream
-			dataout.close();
+			dataout.close();		
+			
 		} catch (IOException e)
 		{
 			e.printStackTrace();

@@ -276,6 +276,8 @@ public class GeneralServer implements Runnable
    */
   public void run()
   {
+	  Thread.yield(); 
+	  
     // connection to remote device
     StreamConnection c = null;
     try
@@ -640,7 +642,7 @@ public class GeneralServer implements Runnable
           // so we make a new Listener for every searchServices()
           endpt.transId = agent.searchServices(null // null to indicate retrieve default attributes
                                                ,
-                                               new UUID[] { MIDService.BEEHIVE_UUID }  // BlueChat service UUID SerialPort
+                                               new UUID[] { MIDService.BEEHIVE_UUID }  
                                                ,
                                                endpt.remoteDev,
                                                new Listener());

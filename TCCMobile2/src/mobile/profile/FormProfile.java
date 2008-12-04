@@ -56,8 +56,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 		Enumeration e =devicePoints.elements();
 		while(e.hasMoreElements()){
 			DevicePoint dp = (DevicePoint)e.nextElement();
-			usersTable.put(dp.remoteName, dp.getNickname() );
-			profilesVector.addElement(  dp.getNickname()  );			
+			usersTable.put(dp.remoteName, dp.getNickname() );			
 		}		
 	}
 	
@@ -77,6 +76,24 @@ public class FormProfile extends BaseForm implements ActionListener{
 			super.actionPerformed(evt);
 		}
 	};
+	
+	private Command cmdSearchLocal = new Command("Pesquisar Localmente"){
+		public void actionPerformed(ActionEvent evt) {
+			//limpa a hashtable para receber a nova lista
+			usersTable.clear();
+			//limpa o vector que será passado para o list
+			profilesVector.removeAllElements();
+
+			currentForm.setTitle("Pesquisando...");
+
+			getMidlet().startInquiry();
+
+			setProfile(getMidlet().getDevices());
+			
+			loadList(currentForm);
+			super.actionPerformed(evt);
+		}
+	};
 
 	protected void execute(Form f) {
 		//configura o layout do form
@@ -85,6 +102,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 				
 		loadList(f);
 		
+		f.addCommand(cmdSearchLocal);
 		f.addCommand(cmdSearch);			
 		
 		f.show();

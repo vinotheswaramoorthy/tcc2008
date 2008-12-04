@@ -4,13 +4,18 @@ import java.util.Vector;
 
 public class Util {
  
-	public static boolean enableLog = false;
+	public static boolean enableLog = true;
 
+	public static Vector msgs = new Vector(15);
+	
 	public static void Log(String msg){
 
 		if( enableLog ){
-			System.out.println();
-			System.out.println("Loggin: "+msg);
+			//System.out.println();
+			//System.out.println("Log: "+msg);
+			if( msgs.size()>13) 
+				msgs.removeElementAt(0);
+			msgs.addElement(msg);
 		}
 	}
 	public static int unsignedByteToInt(byte b) {

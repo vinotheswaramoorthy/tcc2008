@@ -125,6 +125,8 @@ public class Reader implements Runnable
 					if( tryCntr>10 )stop();
 					tryCntr++;
 				}
+				
+				Thread.yield();
 			} // while !done
 
 			datain.close();

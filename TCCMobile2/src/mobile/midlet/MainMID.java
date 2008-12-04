@@ -58,7 +58,9 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     private Hashtable formsHash = new Hashtable();
     
 	private GeneralServer btServer;
-	
+	public void startInquiry(){
+		btServer.query();
+	}
 	public Vector getDevices(){
 		return btServer.getEndPoints();
 	}
@@ -108,7 +110,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
             setMainForm(r2);
         } catch (Throwable ex) {
             ex.printStackTrace();
-            Dialog.show("Exception", ex.getMessage(), "OK", null);
+            Dialog.show("Exception", ex.getMessage(), ex.getMessage(), null);
         }
 
 	}
@@ -134,7 +136,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         
 		////////////////////////////////////////////////
 		btServer.init("", this);
-		InquireDevices();
+		btServer.query();
 		////////////////////////////////////////////////
 		
         // application logic determins the number of columns based on the screen size
@@ -214,6 +216,17 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         mainMenu.addCommand(aboutCommand);
         mainMenu.addCommand(runCommand);
 
+        if( Util.enableLog ){
+        	Command cmdLog = new Command("Log"){
+        		public void actionPerformed(ActionEvent evt) {
+        			Logger l = new Logger(mainMenu);
+        			l.show();
+        			super.actionPerformed(evt);
+        		}
+        	};
+        	mainMenu.addCommand(cmdLog);
+        }
+        
         mainMenu.setCommandListener(this);
 
         //mainMenu.show();             
