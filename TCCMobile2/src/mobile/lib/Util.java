@@ -12,7 +12,7 @@ public class Util {
 
 		if( enableLog ){
 			//System.out.println();
-			//System.out.println("Log: "+msg);
+			System.out.println("Log: "+msg);
 			if( msgs.size()>13) 
 				msgs.removeElementAt(0);
 			msgs.addElement(msg);

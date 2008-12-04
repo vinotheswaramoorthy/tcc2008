@@ -136,7 +136,7 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
         
 		////////////////////////////////////////////////
 		btServer.init("", this);
-		btServer.query();
+		InquireDevices();
 		////////////////////////////////////////////////
 		
         // application logic determins the number of columns based on the screen size
@@ -322,13 +322,11 @@ public class MainMID extends MIDlet implements ActionListener, BTListener{
     }
     
     private String getAboutText() {
-        return "BEEHIVE bla bla bla bla " +
-                "Interface (UI) in Java ME. " +
-                "This demo contains inside additional different sub-demos " +
-                "to demonstrate key features, where each one can be reached " +
-                "from the main screen. For more details about each sub-demo, " +
-                "please visit the demo help screen. For more details, please " +
-                "contact us at dev.ivan@gmail.com.";
+        return "BEEHIVE é um aplicativo de colaboração desenvolvido para o  " +
+                " TCC (Projeto de Conclusão de Curso) de 2008 do curso de Eng. de " +
+                " Computação do Centro Universitário Fundação Santo André. " +
+                " O projeto foi desenvolvido utilizando o J2ME e as bibliotecas LWUIT e Marge. " +
+                " Para maiores informações ou detalhes envie um e-mail para dev.ivan@gmail.com. ";
     }
     
     

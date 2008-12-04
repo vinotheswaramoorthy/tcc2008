@@ -42,13 +42,25 @@ public class Sender implements Runnable {
 				{
 					// if there is a message to send, send it now
 					//Util.Log("sending signal "+ Util.unsignedByteToInt(s.application)+"|| string '"+s.msg+"' to "+endpt.remoteName);
-					
-					dataout.write(s.getBytes());									
+					byte[] data = s.getBytes();
+					if( data!=null ){
+						dataout.write(data);
+					}
 					/*dataout.writeInt(s.signal);
 					dataout.writeUTF(s.msg );
 					dataout.flush();*/
 					dataout.flush();
 					Util.Log("Sender: package sended.");
+				}
+				else{
+					if( !endpt.getIsExpired() ){
+						ProtoPackage p = new ProtoPackage(Constants.APP_MESSAGE,Constants.CMD_MESSAGE, endpt.btnet.localName,endpt.localName,"updating");
+						byte[] data = p.getBytes();
+						if( data!=null){
+							dataout.write(p.getBytes());							
+						}
+						dataout.flush();
+					}
 				}
 
 				if ( s != null && s.command == Constants.CMD_TERMINATE )

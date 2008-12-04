@@ -103,6 +103,9 @@ public class GeneralServer implements Runnable
 
       //Starting Communication Bridge (PC)
       commBridge.init();
+      
+      //Atualiza temporariamente
+      UpdateDevices();
 
     }
     catch (BluetoothStateException e) {
@@ -180,7 +183,7 @@ public class GeneralServer implements Runnable
     for ( int i=0; i < endPoints.size(); i++ )
     {
       DevicePoint endpt = (DevicePoint) endPoints.elementAt( i );
-      if ( endpt.remoteName.equalsIgnoreCase( rdev.getBluetoothAddress() ) )
+      if ( endpt.remoteName.equalsIgnoreCase( rdev.getBluetoothAddress() ) || endpt.remoteDev.equals(rdev) )
       {
         return endpt;
       }
@@ -256,7 +259,8 @@ public class GeneralServer implements Runnable
     endpt.sender.stop();
 
     // remove this end point from the active end point list
-    endPoints.removeElement( endpt );
+    if( endPoints.removeElement( endpt ) )
+    	Util.Log("Dispositivo " + endpt.localName +"removido com sucesso.");
   }
   
   public void insertRemoteEndPoint(DevicePoint endpt){
@@ -405,7 +409,27 @@ public class GeneralServer implements Runnable
     } // while !done
   } // end run()
 
-
+	public static final long TEMPO = ( 5000 * 2 ); //atualiza o site a cada 60 segundos   
+  
+   Timer deviceTimer = null;   
+   
+   public void UpdateDevices() {   
+      if( deviceTimer == null ) {   
+    	  deviceTimer = new Timer();   
+         TimerTask tarefa = new TimerTask() {   
+            public void run() {   	
+            	synchronized (this) {
+            		for(int i=0;i<endPoints.size();i++){
+            			DevicePoint dp = (DevicePoint)endPoints.elementAt(i);
+            			if( dp.getIsExpired())
+            				cleanupRemoteEndPoint(dp);
+            		}
+				}	            	     	                 
+            }   
+         };   
+         deviceTimer.scheduleAtFixedRate(tarefa, TEMPO, TEMPO);   
+      }   
+   }
   /**
    * Internal discovery listener class for handling device & service discovery events.
    * @author Ben Hui

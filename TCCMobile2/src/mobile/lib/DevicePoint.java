@@ -1,5 +1,8 @@
 package mobile.lib;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.bluetooth.DeviceClass;
@@ -39,6 +42,16 @@ public class DevicePoint
 	  if( nick!="") nickname = nick;
   }
 
+  private long expireTime;
+  public void updateActive(){
+	  expireTime = new Date().getTime()+20000;
+  }
+  
+  public boolean getIsExpired(){
+	  long diff = expireTime-new Date().getTime();
+	  return diff<0;
+  }
+  
   // BTListener implementation for callback GeneralServer event
   BTListener callback;
 
@@ -72,14 +85,19 @@ public class DevicePoint
     localName = btnet.localName;
     callback = btnet.callback;
     con = c;
+    
+    this.updateActive();
 
     sender = new Sender();
     sender.endpt = this;
 
     reader = new Reader();
     reader.endpt = this;
-
-
+  }
+  
+  public synchronized void Close(){
+	  btnet.cleanupRemoteEndPoint(this);
+	  Util.Log(" Device point finalized: "+nickname);
   }
 
 //  public synchronized void putString( int signal, String s )
@@ -92,7 +110,7 @@ public class DevicePoint
 //      // tell sender that there is a message pending to be sent
 //      sender.notify();
 //    }
-//  }
+//  } 
   
   public synchronized void putPacket(ProtoPackage pp){
 	  

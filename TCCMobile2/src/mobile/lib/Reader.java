@@ -38,7 +38,10 @@ public class Reader implements Runnable
 				ProtoPackage pkt = ProtoPackage.getProtoPackage(dataPkt);
 
 				if(pkt != null){
-
+					
+					//Recebi alguma mensagem então atualiza atividade
+					endpt.updateActive();
+					
 					//Checa se sou o receptor do pacote
 					if( !pkt.receiver.equalsIgnoreCase(endpt.btnet.localName))
 					{

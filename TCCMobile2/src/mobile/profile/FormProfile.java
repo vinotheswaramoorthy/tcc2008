@@ -40,6 +40,8 @@ import com.sun.lwuit.layouts.BorderLayout;
 import com.sun.lwuit.list.ListCellRenderer;
 import com.sun.lwuit.plaf.Border;
 
+import com.extend.*;
+
 public class FormProfile extends BaseForm implements ActionListener{
 
 	private Vector profilesVector = new Vector();
@@ -68,7 +70,7 @@ public class FormProfile extends BaseForm implements ActionListener{
 			profilesVector.removeAllElements();
 
 			//envia o frame requisitando os usuários disponíveis			
-			getMidlet().send(Constants.APP_GENERAL, Constants.CMD_REQUESTUSERS, "0|"+ getMidlet().getMyDeviceName());
+			getMidlet().send(Constants.APP_GENERAL, Constants.CMD_REQUESTUSERS, "0|"+ getMidlet().getMyDeviceName());							
 			
 			setProfile(getMidlet().getDevices());
 			

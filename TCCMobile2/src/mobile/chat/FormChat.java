@@ -1,5 +1,6 @@
 package mobile.chat;
 
+import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -36,7 +37,7 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 	private List itensList;
 	
 	//Salas criadas pelo usuário
-	private Vector userChats;
+	private Vector userChats = new Vector();
 
 	//Campo texto de criar uma sala
 	private TextField txtRoomName;
@@ -118,6 +119,16 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 		//Dialog.show("Informações", "testando...", "Ok","Cancelar");		
 	}
 	
+	private boolean existChat(ChatRoom cr){
+		Enumeration e = userChats.elements();
+		while(e.hasMoreElements()){
+			ChatRoom room = (ChatRoom)e.nextElement();
+			if(room.name.equalsIgnoreCase(cr.name))
+				return true;			
+		}
+		return false;
+	}
+	
 	public void actionPerformed(ActionEvent evt) {
 		if( evt.getSource() == itensList){
 			
@@ -165,7 +176,10 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 				
 				if( dataReceived.length>1){
 					ChatRoom cr = new ChatRoom( pkt.sender,dataReceived[0],dataReceived[1]);
-					itensList.addItem(cr);					
+					if( !existChat(cr)){
+						userChats.addElement(cr);
+						itensList.addItem(cr);
+					}
 				}
 			}
 		} 
@@ -174,6 +188,7 @@ public class FormChat extends BaseForm implements BTListener,ActionListener{
 			fRoom.handleAction(event, endpt, pkt);	
 		}
 	}
+
 	
 	public static final long TEMPO = ( 3000 * 10 ); //atualiza o site a cada 30 segundos   
 	  
