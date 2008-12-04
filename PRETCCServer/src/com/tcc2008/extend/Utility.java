@@ -55,6 +55,29 @@ public class Utility
 
 		return genPackage(proto);
 	}
+	
+	/** 
+	 * Gera um pacote de envio simples para o servidor, 
+	 * como nao ha destinatario, o pacote será entregue a 
+	 * todos que estao com a aplicaçao ativada.	  
+	 * 
+	 * @param idFrom uid de origem
+	 * @param idApplication id da Aplicacao(max 16 char)
+	 * @param isPersisted se o pacote pode ser armazenado caso nao encontre o destino
+	 * @param data dados da aplicacao
+	 * @return pacote em bytes para ser enviado para o servidor de redirecionamento
+	 */
+	public static byte[] genPackageToSend(String idFrom, String idApplication, boolean isPersisted, byte[] data){
+
+		Protocol proto = new Protocol();
+		proto.setCommand(Dictionary.CMD_SEND);
+		proto.setIDFrom(new UUID(idFrom));
+		proto.setIDApp(new UUID(idApplication));
+		proto.setPersisted(isPersisted);
+		proto.setData(data);
+
+		return genPackage(proto);
+	}
 
 	/**
 	 * Gera pacote de solicitacao de uid a partir de usuario e senha cadastrado no servidor central

@@ -3,8 +3,18 @@ import com.tcc2008.extend.Utility;
 
 
 public class MasterReference {
+	private String webServiceIP;
+	private static MasterReference instance;
 	
-	public static boolean checkUID(String idFrom){
+	public static MasterReference getInstance() {
+		return instance;
+	}
+	
+	public MasterReference(String webServiceIP){
+		this.webServiceIP = webServiceIP;	
+	}
+	
+	public boolean checkUID(String idFrom){
 		Utility.Log(idFrom);
 		String response = soapRequest(	"IsValidUser", 
 				new String[] {"uid"} , 
@@ -14,7 +24,7 @@ public class MasterReference {
 	  	return Boolean.parseBoolean(response);
 	}	
 	
-	public static String getServerDestination(String idFrom, String idApplication){
+	public String getServerDestination(String idFrom, String idApplication){
 		String response = soapRequest(	"GetDeviceLocationServer", 
 				new String[] {"uid","application"} , 
 				new String[] {idFrom, idApplication} );
@@ -24,7 +34,7 @@ public class MasterReference {
 		return response;
 	}
 	
-	public static String getUID(String user, String password){
+	public String getUID(String user, String password){
 		String response = soapRequest(	"LoginUser", 
 										new String[] {"login","password"} , 
 										new String[] {user, password} );
@@ -37,7 +47,7 @@ public class MasterReference {
 		return response;
 	}
 	
-	public static boolean updateLocation(String idFrom, String idApplication, String idServer){
+	public boolean updateLocation(String idFrom, String idApplication, String idServer){
 		String response = soapRequest(	"IncludeDevice", 
 				new String[] {"uid", "application", "serverID"} , 
 				new String[] {idFrom, idApplication, idServer} );
@@ -57,10 +67,10 @@ public class MasterReference {
 	
 	
 	
-	private static String soapRequest(String methodName, String[] paramName, String[] paramValue ){
+	private String soapRequest(String methodName, String[] paramName, String[] paramValue ){
 		if (paramName.length != paramValue.length) return "[ERROR PARAM]";
 		
-		SoapRequestBuilder s = new SoapRequestBuilder();
+		SoapRequestBuilder s = new SoapRequestBuilder(webServiceIP);
 	    s.Server = "127.0.0.1";
 	  	    
 	    s.MethodName = methodName;
@@ -77,9 +87,7 @@ public class MasterReference {
 	    }
 	    String response = s.sendRequest();
 	    response = response.replace("&lt;", "<").replace("&gt;", ">");	    
-	    Utility.Log(" -------     RESPONSE    -------\n"+
-	    		response+
-	    		"\n***********************************************");
+	    Utility.Log(" -------  WEBSERVICE RESPONSE -------\n"+response);
 
 		return response;
 	}

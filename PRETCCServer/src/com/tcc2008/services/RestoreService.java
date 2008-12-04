@@ -11,14 +11,15 @@ import com.tcc2008.webservice.MasterReference;
 
 public class RestoreService implements Runnable {
 
+	MasterReference webservice;
 	private Vector<Protocol> repository;
 	private Vector<Protocol> queueRX;
 	private boolean started = true;
 
-	public RestoreService(Vector<Protocol> repository , Vector<Protocol> queueRX){
+	public RestoreService(Vector<Protocol> repository , Vector<Protocol> queueRX, MasterReference webservice){
 		this.repository = repository;
 		this.queueRX = queueRX;
-		
+		this.webservice = webservice;
 		Thread t = new Thread(this);
 		t.start();		
 	}
@@ -30,7 +31,7 @@ public class RestoreService implements Runnable {
 			while (repository.size() > 0) {
 			
 				Protocol proto = repository.remove(0);
-				if( MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toString()) != "")
+				if( webservice.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toString()) != "")
 					queueRX.add(proto);
 				else list.add(proto);
 			}

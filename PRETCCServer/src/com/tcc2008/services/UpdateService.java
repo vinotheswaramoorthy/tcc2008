@@ -10,16 +10,17 @@ import com.tcc2008.webservice.MasterReference;
 
 
 public class UpdateService implements Runnable{
-
+	MasterReference webservice;
 	private String serverName = "";
 	private Vector<Protocol> queueUpdate;
 	private Vector<Protocol> queueTX;
 	private boolean started = true;
 
-	public UpdateService(String serverName, Vector<Protocol> queueUpdate, Vector<Protocol> queueTX){
+	public UpdateService(String serverName, Vector<Protocol> queueUpdate, Vector<Protocol> queueTX, MasterReference webservice){
 		this.serverName = serverName;
 		this.queueUpdate = queueUpdate;
 		this.queueTX = queueTX;
+		this.webservice = webservice;
 		
 		Thread t = new Thread(this);
 		t.start();
@@ -33,7 +34,7 @@ public class UpdateService implements Runnable{
 				Protocol proto = queueUpdate.remove(0);
 				if(!proto.getIDFrom().toString().equals("00000000-0000-0000-0000-000000000000"))
 				{
-					if(MasterReference.updateLocation(proto.getIDFrom().toString(), proto.getIDApp().toString(), serverName))
+					if(webservice.updateLocation(proto.getIDFrom().toString(), proto.getIDApp().toString(), serverName))
 					{
 						Utility.Log("LOCATION UPDATE:\t"+proto.getIDFrom()+"["+ new String(proto.getData())+"] TO "+ proto.getIDApp()+" IN "+serverName  );
 					}

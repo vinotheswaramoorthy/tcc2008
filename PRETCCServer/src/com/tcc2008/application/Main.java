@@ -14,15 +14,18 @@ import com.tcc2008.services.RedirectService;
 import com.tcc2008.services.RestoreService;
 import com.tcc2008.services.ServerCOMM;
 import com.tcc2008.services.UpdateService; 
+import com.tcc2008.webservice.MasterReference;
 
 public class Main {
-
+	
 	public static void main(String[] args) {
 
 		final String serverName = args[0];
-
+		
 		/****************************************************************/
 
+		MasterReference webservice = new MasterReference(args[1]);
+		
 		// Fila de Pacotes recebidos, esperando para ser redirecionado
 		Vector<Protocol> queueRX = new Vector<Protocol>();
 
@@ -45,10 +48,10 @@ public class Main {
 		PackageTXService txService = new PackageTXService(queueTX,
 				serviceRecptor);
 		RedirectService redirectService = new RedirectService(serverName,
-				queueRX, queueTX, queueUpdate, repository);
+				queueRX, queueTX, queueUpdate, repository, webservice);
 		UpdateService updateService = new UpdateService(serverName,
-				queueUpdate, queueTX);
-		RestoreService restoreService = new RestoreService(repository, queueRX);
+				queueUpdate, queueTX, webservice);
+		RestoreService restoreService = new RestoreService(repository, queueRX, webservice);
 
 		/******************************************************************/
 		/* Iniciando o Serviço de comunicação RMI entre os servidores */
@@ -56,7 +59,7 @@ public class Main {
 
 		try {
 			ServerCOMM serviceCOMM = new ServerCOMM(queueRX);  
-			String rmiObjectName = "rmi://"+args[1]+"/REDIRECTSERVERSCOMM";
+			String rmiObjectName = "rmi://"+args[0]+"/REDIRECTSERVERSCOMM";
 
 			Utility.Log(rmiObjectName);
 			Naming.rebind(rmiObjectName, serviceCOMM);

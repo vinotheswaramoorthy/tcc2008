@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class SoapRequestBuilder {
+	String WebServiceIP = "localhost";
 	String Server = "";
 	String WebServicePath = "";
 	String SoapAction = "";
@@ -16,12 +17,17 @@ public class SoapRequestBuilder {
 	private Vector ParamNames = new Vector();
 	private Vector ParamData = new Vector();
 
+	public SoapRequestBuilder(String webServiceIP) {
+		this.WebServiceIP = webServiceIP;
+	}
+
 	public void AddParameter(String Name, String Data) {
 		ParamNames.addElement( (Object) Name);
 		ParamData.addElement( (Object) Data);
 	}
 
-	public String sendRequest() {
+	public synchronized String sendRequest() {	
+		
 		String retval = "";
 		Socket socket = null;
 	    try {
@@ -38,7 +44,7 @@ public class SoapRequestBuilder {
 	      BufferedReader in = new BufferedReader(new InputStreamReader(socket.
 	          getInputStream()));
 	
-	      int length = 275 + (MethodName.length() * 2) + XmlNamespace.length();
+	      int length = 267 + (MethodName.length() * 2) + XmlNamespace.length()+ WebServiceIP.length() ;
 	      for (int t = 0; t < ParamNames.size(); t++) {
 	    	  String name = (String) ParamNames.elementAt(t);
 	    	  String data = (String) ParamData.elementAt(t);
@@ -49,7 +55,7 @@ public class SoapRequestBuilder {
 	
 	      // send an HTTP request to the web service
 	      out.println("POST " + WebServicePath + " HTTP/1.1");
-	      out.println("Host: localhost:80");
+	      out.println("Host: "+ WebServiceIP +":80");
 	      out.println("Content-Type: text/xml; charset=utf-8");
 	      out.println("Content-Length: " + String.valueOf(length));
 	      out.println("SOAPAction: \"" + SoapAction + "\"");
@@ -112,5 +118,13 @@ public class SoapRequestBuilder {
 	    }
 	
 	    return retval;
+	}
+
+	public String getWebServiceIP() {
+		return WebServiceIP;
+	}
+
+	public void setWebServiceIP(String webServiceIP) {
+		WebServiceIP = webServiceIP;
 	}
 }

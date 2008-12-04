@@ -11,7 +11,7 @@ import com.tcc2008.webservice.MasterReference;
 
 
 public class RedirectService implements Runnable {
-
+	MasterReference webservice;
 	Vector<Protocol> queueRX; 
 	Vector<Protocol> queueTX; 
 	Vector<Protocol> queueUpdate; 
@@ -20,13 +20,13 @@ public class RedirectService implements Runnable {
 	private String serverName = "";
 	
 	
-	public RedirectService(String serverName, Vector<Protocol> queueRX, Vector<Protocol> queueTX, Vector<Protocol> queueUpdate, Vector<Protocol> repository){
+	public RedirectService(String serverName, Vector<Protocol> queueRX, Vector<Protocol> queueTX, Vector<Protocol> queueUpdate, Vector<Protocol> repository, MasterReference webservice){
 		this.queueRX = queueRX;
 		this.queueTX = queueTX;
 		this.queueUpdate = queueUpdate;
 		this.repository = repository;
 		this.serverName = serverName;
-		
+		this.webservice = webservice;
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -53,7 +53,7 @@ public class RedirectService implements Runnable {
 			else if(proto.getCommand()== (byte) Dictionary.CMD_GETUUID){
 				String userpass = new String(proto.getData());
 				String[] info = userpass.split(";");
-				String uid = MasterReference.getUID(info[0], info[1]).replace("-", "");
+				String uid = webservice.getUID(info[0], info[1]).replace("-", "");
 				
 				
 				proto.setIDFrom(new UUID(uid));
@@ -69,7 +69,7 @@ public class RedirectService implements Runnable {
 			else if(proto.getCommand()== (byte) Dictionary.CMD_SEND){
 				
 				// Verifica se o ID de Origem é válido
-				if(!MasterReference.checkUID(proto.getIDFrom().toString()))
+				if(!webservice.checkUID(proto.getIDFrom().toString()))
 				{
 					Utility.Log("INVALID 'IDFROM': "+ proto.getIDFrom() );
 					// Posso colocar uma resposta de invalid ID
@@ -77,7 +77,16 @@ public class RedirectService implements Runnable {
 				}
 				else Utility.Log("VALIDATED 'IDFROM': "+ proto.getIDFrom() );
 				
-				String serverDest = MasterReference.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toHexString());
+				// Verifica se o ID de Origem é válido
+				if(!webservice.checkUID(proto.getIDTo().toString()))
+				{
+					Utility.Log("INVALID 'IDTO': "+ proto.getIDTo() );
+					// Posso colocar uma resposta de invalid ID
+					continue;
+				}
+				else Utility.Log("VALIDATED 'IDTO': "+ proto.getIDFrom() );
+				
+				String serverDest = webservice.getServerDestination(proto.getIDTo().toString(), proto.getIDApp().toString());
 				
 				if(containsThis(serverDest))
 				{
@@ -111,6 +120,8 @@ public class RedirectService implements Runnable {
 	}
 	
 	private boolean containsThis(String serverName) {
+		if(serverName == "") return false;
+		
 		return this.serverName.contains(serverName);
 	}
 
